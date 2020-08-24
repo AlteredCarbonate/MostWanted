@@ -1,6 +1,7 @@
 import * as alt from "alt-server";
-import { log } from "../configuration/log";
+import { logStream } from "../configuration/log";
+import { LogTypes } from "../enums/LogTypes";
 
 alt.on("playerDisconnect", (player: alt.Player) => {
-  log(`${player} disconnected`);
+  logStream(`${player} disconnected.`, LogTypes.Player);
 });
