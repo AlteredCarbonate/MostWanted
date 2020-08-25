@@ -8,22 +8,21 @@ alt.onClient(
    "consoleCommand::command",
    (player: alt.Player, args: string[]) => {
       if (!args) return;
-      let _prefix = args[0];
+      let prefix = args[0];
 
-      switch (_prefix) {
+      switch (prefix) {
          case "veh":
-            let _vehName = args[1].toUpperCase();
+            const [, vehName, tpPlayer] = args;
             let veh;
-            if (!_vehName)
+            if (!vehName)
                return consoleMessage(
                   player,
                   "Usage: veh <vehName:vehicle> <tpPlayer:bool>",
                   ConsoleTypes.Error
                );
-
             try {
                veh = new alt.Vehicle(
-                  _vehName,
+                  vehName,
                   player.pos.x,
                   player.pos.y,
                   player.pos.z,
@@ -34,21 +33,21 @@ alt.onClient(
                if (veh) {
                   veh.numberPlateText = Config.vehiclePlateName;
                   logStream(
-                     `${player.name} spawned an ${_vehName}.`,
+                     `${player.name} spawned an ${vehName.toUpperCase()}.`,
                      LogTypes.Command
                   );
                   consoleMessage(
                      player,
-                     `Successfuly spawned a ${_vehName}`,
+                     `Successfuly spawned a ${vehName.toUpperCase()}`,
                      ConsoleTypes.Default
                   );
 
-                  if (!args[2]) {
+                  if (!tpPlayer) {
                      veh.setSyncedMeta("vehicle::data", {
                         owner: player.name,
                         tpPlayer: false,
                      });
-                  } else if (args[2]) {
+                  } else if (tpPlayer) {
                      veh.setSyncedMeta("vehicle::data", {
                         owner: player.name,
                         tpPlayer: true,
@@ -63,12 +62,14 @@ alt.onClient(
                );
             }
             break;
-
+         case "lobby":
+            break;
          default:
             break;
       }
    }
 );
+
 /**
  * @param  {alt.Player} player Player
  * @param  {string} message Message to be send
