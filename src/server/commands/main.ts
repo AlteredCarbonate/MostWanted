@@ -3,6 +3,9 @@ import { ConsoleTypes } from "../enums/ConsoleTypes";
 import { Config } from "../configuration/config";
 import { logStream } from "../configuration/log";
 import { LogTypes } from "../enums/LogTypes";
+import { Manager } from "../systems/lobby/manager";
+import { CommandList } from "../enums/CommandList";
+import { LobbyActions } from "../enums/LobbyActions";
 
 alt.onClient(
    "consoleCommand::command",
@@ -11,7 +14,7 @@ alt.onClient(
       let prefix = args[0];
 
       switch (prefix) {
-         case "veh":
+         case CommandList.Vehicle:
             const [, vehName, tpPlayer] = args;
             let veh;
             if (!vehName)
@@ -62,10 +65,52 @@ alt.onClient(
                );
             }
             break;
-         case "lobby":
-            break;
-         default:
-            break;
+         case CommandList.Lobby:
+            let action = args[1];
+            if (!action)
+               return consoleMessage(
+                  player,
+                  "Usage: lobby <action:actionTypes>",
+                  ConsoleTypes.Error
+               );
+
+            switch (action) {
+               case LobbyActions.Join:
+                  Manager.join(player);
+
+                  logStream(
+                     `${player.name} joined the Lobby.`,
+                     LogTypes.Command
+                  );
+                  consoleMessage(
+                     player,
+                     `Successfuly joined the Lobby`,
+                     ConsoleTypes.Default
+                  );
+                  break;
+               case LobbyActions.Ready:
+                  Manager.ready(player);
+
+                  logStream(`${player.name} set Ready.`, LogTypes.Command);
+                  consoleMessage(
+                     player,
+                     `Successfuly changed Status to Ready`,
+                     ConsoleTypes.Default
+                  );
+                  break;
+               case LobbyActions.Leave:
+                  Manager.leave(player);
+
+                  logStream(`${player.name} left the Lobby.`, LogTypes.Command);
+                  consoleMessage(
+                     player,
+                     `Successfuly left the Lobby`,
+                     ConsoleTypes.Default
+                  );
+                  break;
+               default:
+                  break;
+            }
       }
    }
 );

@@ -9,6 +9,7 @@ alt.on("playerConnect", (player: alt.Player) => {
 });
 
 function handshake(player: alt.Player) {
+   alt.emit("lobby::init", player);
    alt.onClient("client:endHandshake", (player: alt.Player) => {
       logStream(
          `${player.name} Handshake complete, answered successful.`,

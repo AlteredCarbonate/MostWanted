@@ -1,23 +1,13 @@
 import * as alt from "alt-server";
-import { ILobbyInfo } from "../../interfaces/ILobbyInfo";
-import { LobbyStatus } from "../../enums/LobbyStatus";
-
-let lobby: Array<ILobbyInfo> = [];
+import { lobby } from "./globalLobby";
+import { Manager } from "./manager";
 
 alt.onClient("system:lobby::ready", (player: alt.Player) => {
-   player.setMeta("lobby::ready", true);
-   lobby.push({
-      id: player.id,
-      playerName: player.name,
-      rank: 0,
-      status: LobbyStatus.Ready,
-   });
+   Manager.ready(player);
    console.log(lobby);
 });
 
-// {
-//   id: 1,
-//   playerName: "Carbon",
-//   rank: 2,
-//   status: Ready
-// }
+alt.onClient("system:lobby::join", (player: alt.Player) => {
+   Manager.join(player);
+   console.log(lobby);
+});

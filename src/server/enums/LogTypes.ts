@@ -3,4 +3,5 @@ export enum LogTypes {
    Player,
    Server,
    Command,
+   Lobby,
 }

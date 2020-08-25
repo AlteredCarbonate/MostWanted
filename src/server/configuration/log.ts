@@ -14,12 +14,12 @@ export function logStream(
    message: string,
    type: LogTypes = LogTypes.Undefined
 ) {
-   const _date = moment().format("YYYY/MM/DD hh:mm:ss a");
+   const date = moment().format("YYYY/MM/DD hh:mm:ss a");
 
    if (type == LogTypes.Undefined) {
       fs.appendFile(
          "logs/general.log",
-         `[GENERAL] [${_date}]: ${message}\n`,
+         `[GENERAL] [${date}]: ${message}\n`,
          function (err) {
             if (err) throw err;
          }
@@ -27,7 +27,7 @@ export function logStream(
    } else {
       fs.appendFile(
          "logs/general.log",
-         `[${LogTypes[type]}] [${_date}]: ${message}\n`,
+         `[${LogTypes[type]}] [${date}]: ${message}\n`,
          function (err) {
             if (err) throw err;
          }
@@ -36,27 +36,32 @@ export function logStream(
 
    switch (type) {
       case LogTypes.Player:
-         fs.appendFile("logs/player.log", `[${_date}]: ${message}\n`, function (
+         fs.appendFile("logs/player.log", `[${date}]: ${message}\n`, function (
             err
          ) {
             if (err) throw err;
          });
          break;
       case LogTypes.Server:
-         fs.appendFile("logs/server.log", `[${_date}]: ${message}\n`, function (
+         fs.appendFile("logs/server.log", `[${date}]: ${message}\n`, function (
             err
          ) {
             if (err) throw err;
          });
          break;
       case LogTypes.Command:
-         fs.appendFile(
-            "logs/command.log",
-            `[${_date}]: ${message}\n`,
-            function (err) {
-               if (err) throw err;
-            }
-         );
+         fs.appendFile("logs/command.log", `[${date}]: ${message}\n`, function (
+            err
+         ) {
+            if (err) throw err;
+         });
+         break;
+      case LogTypes.Lobby:
+         fs.appendFile("logs/lobby.log", `[${date}]: ${message}\n`, function (
+            err
+         ) {
+            if (err) throw err;
+         });
          break;
       default:
          break;
