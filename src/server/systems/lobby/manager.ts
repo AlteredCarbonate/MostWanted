@@ -4,11 +4,8 @@ import { LobbyStatus } from "../../enums/LobbyStatus";
 import { LogTypes } from "../../enums/LogTypes";
 import { logStream } from "../../configuration/log";
 
-let playerInit = false;
-
 alt.on("lobby::init", (player) => {
-   console.log(player.name + " Triggered Init.");
-   playerInit = true;
+   player.setMeta("lobby::init", true);
 });
 
 export class Manager {
@@ -23,7 +20,8 @@ export class Manager {
          return console.log(player.name + " Status already ready.");
 
       if (target.status === LobbyStatus.Joining) {
-         playerInit = false;
+         player.setMeta("lobby::init", false);
+
          target.status = LobbyStatus.Ready;
 
          logStream(`${player.name} set Ready.`, LogTypes.Lobby);
@@ -34,14 +32,14 @@ export class Manager {
     * @param  {alt.Player} player
     */
    public static join(player: alt.Player) {
-      if (playerInit) {
+      if (player.getMeta("lobby::init")) {
          lobby.push({
             id: player.id,
             playerName: player.name,
             rank: 0,
             status: LobbyStatus.Joining,
          });
-         playerInit = false;
+         player.setMeta("lobby::init", false);
 
          logStream(`${player.name} joined the Lobby.`, LogTypes.Lobby);
       }
@@ -52,7 +50,7 @@ export class Manager {
     */
    public static leave(player: alt.Player) {
       const target = lobby.findIndex((item) => item.id == player.id);
-      if (!playerInit) {
+      if (!player.getMeta("lobby::init")) {
          if (target == -1) return; //NOT FOUND;
          lobby.splice(target);
 
