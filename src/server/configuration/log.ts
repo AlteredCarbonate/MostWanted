@@ -7,7 +7,8 @@ export function log(message: any) {
    alt.log(message);
 }
 /**
- * @param  {string} message Defines message sent to log
+ * Log a string with types into a .log
+ * @param  {string} message Define the set message
  * @param  {LogTypes=LogTypes.Undefined} type Default Undefined | Types Server; Player;
  */
 export function logStream(

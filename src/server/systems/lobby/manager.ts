@@ -12,20 +12,27 @@ alt.on("lobby::init", (player) => {
 });
 
 export class Manager {
+   /**
+    * Set Lobbystate to Ready
+    * @param  {alt.Player} player
+    */
    public static ready(player: alt.Player) {
-      if (lobby[player.id].status)
+      const target = lobby.find((item) => item.id == player.id);
+
+      if (target.status === LobbyStatus.Ready)
          return console.log(player.name + " Status already ready.");
 
-      if (lobby[player.id].status === LobbyStatus.Joining) {
+      if (target.status === LobbyStatus.Joining) {
          playerInit = false;
-         lobby[player.id].status = LobbyStatus.Ready;
+         target.status = LobbyStatus.Ready;
 
          logStream(`${player.name} set Ready.`, LogTypes.Lobby);
-         console.log(player.name + " Status Joining, now ready.");
-         console.table(lobby);
       }
    }
-
+   /**
+    * Join Lobby
+    * @param  {alt.Player} player
+    */
    public static join(player: alt.Player) {
       if (playerInit) {
          lobby.push({
@@ -37,16 +44,19 @@ export class Manager {
          playerInit = false;
 
          logStream(`${player.name} joined the Lobby.`, LogTypes.Lobby);
-         console.table(lobby);
       }
    }
-
+   /**
+    * Leave Lobby
+    * @param  {alt.Player} player
+    */
    public static leave(player: alt.Player) {
       const target = lobby.findIndex((item) => item.id == player.id);
       if (!playerInit) {
          if (target == -1) return; //NOT FOUND;
          lobby.splice(target);
-         console.log(lobby);
+
+         logStream(`${player.name} left the Lobby.`, LogTypes.Lobby);
       }
    }
 }

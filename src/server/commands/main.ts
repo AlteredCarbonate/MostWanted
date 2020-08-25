@@ -16,7 +16,8 @@ alt.onClient(
       switch (prefix) {
          case CommandList.Vehicle:
             const [, vehName, tpPlayer] = args;
-            let veh;
+            let veh: any;
+
             if (!vehName)
                return consoleMessage(
                   player,
@@ -78,10 +79,6 @@ alt.onClient(
                case LobbyActions.Join:
                   Manager.join(player);
 
-                  logStream(
-                     `${player.name} joined the Lobby.`,
-                     LogTypes.Command
-                  );
                   consoleMessage(
                      player,
                      `Successfuly joined the Lobby`,
@@ -91,7 +88,6 @@ alt.onClient(
                case LobbyActions.Ready:
                   Manager.ready(player);
 
-                  logStream(`${player.name} set Ready.`, LogTypes.Command);
                   consoleMessage(
                      player,
                      `Successfuly changed Status to Ready`,
@@ -101,7 +97,6 @@ alt.onClient(
                case LobbyActions.Leave:
                   Manager.leave(player);
 
-                  logStream(`${player.name} left the Lobby.`, LogTypes.Command);
                   consoleMessage(
                      player,
                      `Successfuly left the Lobby`,
