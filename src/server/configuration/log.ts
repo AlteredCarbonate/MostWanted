@@ -49,6 +49,15 @@ export function logStream(
             if (err) throw err;
          });
          break;
+      case LogTypes.Command:
+         fs.appendFile(
+            "logs/command.log",
+            `[${_date}]: ${message}\n`,
+            function (err) {
+               if (err) throw err;
+            }
+         );
+         break;
       default:
          break;
    }

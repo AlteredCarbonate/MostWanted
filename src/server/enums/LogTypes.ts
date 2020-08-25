@@ -1,5 +1,6 @@
 export enum LogTypes {
-  Undefined,
-  Player,
-  Server,
+   Undefined,
+   Player,
+   Server,
+   Command,
 }

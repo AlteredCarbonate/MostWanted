@@ -1,8 +1,9 @@
 import * as alt from "alt-client";
 import { ConsoleTypes } from "../enums/ConsoleTypes";
 
-alt.on("consoleCommand", (player: alt.Player, args: string[]) => {
-   alt.emitServer("consoleCommand::command", player, args);
+alt.on("consoleCommand", (...args: string[]) => {
+   console.log(args[2]);
+   alt.emitServer("consoleCommand::command", args);
 });
 
 alt.onServer(
