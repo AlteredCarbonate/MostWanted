@@ -1,19 +1,18 @@
 import * as alt from "alt-server";
 import { ConsoleTypes } from "../enums/ConsoleTypes";
 import { Config } from "../configuration/config";
+import { logStream } from "../configuration/log";
+import { LogTypes } from "../enums/LogTypes";
 
 alt.onClient(
    "consoleCommand::command",
    (player: alt.Player, args: string[]) => {
-      console.log("ARG ONE: " + args[0]);
-      console.log("ARG TWO: " + args[1]);
-      console.log("ARG TWO: " + args[2]);
       if (!args) return;
       let _prefix = args[0];
 
       switch (_prefix) {
          case "veh":
-            let _vehName = args[1];
+            let _vehName = args[1].toUpperCase();
             let veh;
             if (!_vehName)
                return consoleMessage(
@@ -34,6 +33,15 @@ alt.onClient(
                );
                if (veh) {
                   veh.numberPlateText = Config.vehiclePlateName;
+                  logStream(
+                     `${player.name} spawned an ${_vehName}.`,
+                     LogTypes.Command
+                  );
+                  consoleMessage(
+                     player,
+                     `Successfuly spawned a ${_vehName}`,
+                     ConsoleTypes.Default
+                  );
 
                   if (!args[2]) {
                      veh.setSyncedMeta("vehicle::data", {
@@ -54,7 +62,6 @@ alt.onClient(
                   ConsoleTypes.Error
                );
             }
-
             break;
 
          default:
@@ -62,11 +69,15 @@ alt.onClient(
       }
    }
 );
-
+/**
+ * @param  {alt.Player} player Player
+ * @param  {string} message Message to be send
+ * @param  {ConsoleTypes} type? Default Default | Types Warning; Error;
+ */
 export function consoleMessage(
    player: alt.Player,
    message: string,
-   type?: ConsoleTypes
+   type: ConsoleTypes = ConsoleTypes.Default
 ) {
    alt.emitClient(player, "consoleCommand::message", message, type);
 }
