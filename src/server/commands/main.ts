@@ -66,6 +66,7 @@ alt.onClient(
                );
             }
             break;
+
          case CommandList.Lobby:
             let action = args[1];
             if (!action)
@@ -103,9 +104,28 @@ alt.onClient(
                      ConsoleTypes.Default
                   );
                   break;
-               default:
-                  break;
             }
+            break;
+
+         case CommandList.Position:
+            let usage = args[1];
+            if (!usage) {
+               consoleMessage(
+                  player,
+                  `[X]: ${player.pos.x.toFixed(4)} [Y]: ${player.pos.y.toFixed(
+                     4
+                  )} [Z]: ${player.pos.z.toFixed(4)}`
+               );
+            } else {
+               consoleMessage(
+                  player,
+                  `[X]: ${player.pos.x.toFixed(4)} [Y]: ${player.pos.y.toFixed(
+                     4
+                  )} [Z]: ${player.pos.z.toFixed(4)} => (${usage})`
+               );
+            }
+
+            break;
       }
    }
 );
