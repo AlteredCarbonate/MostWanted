@@ -7,14 +7,11 @@ export function log(message: any) {
    alt.log(message);
 }
 /**
- * Log a string with types into a .log
- * @param  {string} message Define the set message
- * @param  {LogTypes=LogTypes.Undefined} type Default Undefined | Types Server; Player;
+ * Log with categories into a .log
+ * @param  {any} message Define the set message
+ * @param  {LogTypes=LogTypes.Undefined} type Default Undefined | Types Undefined; Server; Player;
  */
-export function logStream(
-   message: string,
-   type: LogTypes = LogTypes.Undefined
-) {
+export function logStream(message: any, type: LogTypes = LogTypes.Undefined) {
    const date = moment().format("YYYY/MM/DD hh:mm:ss a");
 
    if (type == LogTypes.Undefined) {
@@ -63,8 +60,6 @@ export function logStream(
          ) {
             if (err) throw err;
          });
-         break;
-      default:
          break;
    }
 }

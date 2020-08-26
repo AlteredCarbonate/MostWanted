@@ -1,6 +1,6 @@
 import * as alt from "alt-server";
-import { lobby } from "./globalLobby";
-import { Manager } from "./manager";
+import { lobby } from "./internal/globalLobby";
+import { Manager } from "./internal/manager";
 
 alt.onClient("system:lobby::ready", (player: alt.Player) => {
    Manager.ready(player);

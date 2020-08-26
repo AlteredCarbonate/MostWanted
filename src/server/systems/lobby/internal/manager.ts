@@ -1,8 +1,8 @@
 import * as alt from "alt-server";
 import { lobby } from "./globalLobby";
-import { LobbyStatus } from "../../enums/LobbyStatus";
-import { LogTypes } from "../../enums/LogTypes";
-import { logStream } from "../../configuration/log";
+import { LobbyStatus } from "../../../enums/LobbyStatus";
+import { LogTypes } from "../../../enums/LogTypes";
+import { logStream } from "../../../configuration/log";
 
 alt.on("lobby::init", (player) => {
    player.setMeta("lobby::init", true);
@@ -20,8 +20,6 @@ export class Manager {
          return console.log(player.name + " Status already ready.");
 
       if (target.status === LobbyStatus.Joining) {
-         player.setMeta("lobby::init", false);
-
          target.status = LobbyStatus.Ready;
 
          logStream(`${player.name} set Ready.`, LogTypes.Lobby);
@@ -53,6 +51,7 @@ export class Manager {
       if (!player.getMeta("lobby::init")) {
          if (target == -1) return; //NOT FOUND;
          lobby.splice(target);
+         player.setMeta("lobby::init", true);
 
          logStream(`${player.name} left the Lobby.`, LogTypes.Lobby);
       }

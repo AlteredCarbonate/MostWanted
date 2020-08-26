@@ -3,7 +3,7 @@ import { ConsoleTypes } from "../enums/ConsoleTypes";
 import { Config } from "../configuration/config";
 import { logStream } from "../configuration/log";
 import { LogTypes } from "../enums/LogTypes";
-import { Manager } from "../systems/lobby/manager";
+import { Manager } from "../systems/lobby/internal/manager";
 import { CommandList } from "../enums/CommandList";
 import { LobbyActions } from "../enums/LobbyActions";
 
@@ -131,13 +131,14 @@ alt.onClient(
 );
 
 /**
+ * Send a Player a specific consoleMessage
  * @param  {alt.Player} player Player
- * @param  {string} message Message to be send
- * @param  {ConsoleTypes} type? Default Default | Types Warning; Error;
+ * @param  {any} message Message to be send
+ * @param  {ConsoleTypes} type? Default Default | Types Default; Warning; Error;
  */
 export function consoleMessage(
    player: alt.Player,
-   message: string,
+   message: any,
    type: ConsoleTypes = ConsoleTypes.Default
 ) {
    alt.emitClient(player, "consoleCommand::message", message, type);
