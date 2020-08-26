@@ -3,7 +3,7 @@ import { ConsoleTypes } from "../enums/ConsoleTypes";
 import { Config } from "../configuration/config";
 import { logStream } from "../configuration/log";
 import { LogTypes } from "../enums/LogTypes";
-import { Manager } from "../systems/lobby/internal/manager";
+import { PlayerManager, GameManager } from "../systems/lobby/internal/manager";
 import { CommandList } from "../enums/CommandList";
 import { LobbyActions } from "../enums/LobbyActions";
 
@@ -78,23 +78,22 @@ alt.onClient(
 
             switch (action) {
                case LobbyActions.Join:
-                  Manager.playerJoin(player);
+                  PlayerManager.join(player);
 
                   consoleMessage(player, `Attempt to join the Lobby`);
                   break;
                case LobbyActions.Ready:
-                  Manager.playerReady(player);
+                  PlayerManager.ready(player);
 
                   consoleMessage(player, `Attempt to change Status to Ready`);
                   break;
                case LobbyActions.Leave:
-                  Manager.playerLeave(player);
+                  PlayerManager.leave(player);
 
                   consoleMessage(player, `Attempt to leave the Lobby`);
                   break;
                case LobbyActions.Start:
-                  Manager.gameStart(player);
-
+                  GameManager.start(player);
                   consoleMessage(player, "Attempt to start Lobby");
                   break;
             }
