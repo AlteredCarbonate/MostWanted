@@ -1,7 +1,7 @@
 export enum LobbyStatus {
    Joining,
-   Pending,
    Ready,
-   NotReady,
+   Prepared,
+   Starting,
    InPursuit,
 }

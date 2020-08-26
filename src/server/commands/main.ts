@@ -78,31 +78,24 @@ alt.onClient(
 
             switch (action) {
                case LobbyActions.Join:
-                  Manager.join(player);
+                  Manager.playerJoin(player);
 
-                  consoleMessage(
-                     player,
-                     `Successfuly joined the Lobby`,
-                     ConsoleTypes.Default
-                  );
+                  consoleMessage(player, `Attempt to join the Lobby`);
                   break;
                case LobbyActions.Ready:
-                  Manager.ready(player);
+                  Manager.playerReady(player);
 
-                  consoleMessage(
-                     player,
-                     `Successfuly changed Status to Ready`,
-                     ConsoleTypes.Default
-                  );
+                  consoleMessage(player, `Attempt to change Status to Ready`);
                   break;
                case LobbyActions.Leave:
-                  Manager.leave(player);
+                  Manager.playerLeave(player);
 
-                  consoleMessage(
-                     player,
-                     `Successfuly left the Lobby`,
-                     ConsoleTypes.Default
-                  );
+                  consoleMessage(player, `Attempt to leave the Lobby`);
+                  break;
+               case LobbyActions.Start:
+                  Manager.gameStart(player);
+
+                  consoleMessage(player, "Attempt to start Lobby");
                   break;
             }
             break;
