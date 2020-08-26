@@ -1,19 +1,9 @@
 export const Config = {
    // Spawn Location / Camera Point
-   characterPoint: {
-      x: 2827.42333984375,
-      y: -729.071044921875,
-      z: 1.9250786304473877,
-   },
-   characterCamPoint: {
-      x: 2826.87939453125,
-      y: -723.9521484375,
-      z: 1.98758864402771,
-   },
    defaultSpawnPoint: {
-      x: -725.7460327148438,
-      y: -282.2967224121094,
-      z: 36.959503173828125,
+      x: 231.8901,
+      y: -787.5165,
+      z: 30.0212,
    },
    // Player Data
    defaultPlayerCash: 500.0, // Starting Cash
@@ -21,7 +11,6 @@ export const Config = {
    // - Player
    timeRewardTime: 60000 * 5, // How much time before a reward point is added.
    timePlayerSaveTime: 60000 * 2, // How many minutes before we save all player data.
-   timeRefreshContactsTime: 60000, // Every 1 Minute; Refresh Player Contacts
    // - Vehicle
    vehicleSaveTime: 60000 * 5, // 5 Minutes
    vehiclePlateName: "MW",
