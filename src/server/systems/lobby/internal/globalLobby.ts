@@ -1,3 +1,3 @@
-import { ILobbyInfo } from "../../../interfaces/ILobbyInfo";
+import { ILobbyData } from "../../../interfaces/ILobbyData";
 
-export let lobby: Array<ILobbyInfo> = [];
+export let lobby: Array<ILobbyData> = [];

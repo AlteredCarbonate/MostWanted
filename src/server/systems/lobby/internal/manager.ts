@@ -2,6 +2,7 @@ import * as alt from "alt-server";
 import { LobbyStatus } from "../../../enums/LobbyStatus";
 import { LogTypes } from "../../../enums/LogTypes";
 import { logStream } from "../../../configuration/log";
+import { ILobbyData } from "../../../interfaces/ILobbyData";
 
 alt.on("lobby::init", (player) => {
    player.setMeta("lobby::data", { status: LobbyStatus.Init });
@@ -13,12 +14,14 @@ export class PlayerManager {
     * @param  {alt.Player} player
     */
    public static join(player: alt.Player) {
+      let lobbyData: ILobbyData = player.getMeta("lobby::data");
+
       console.log(`Joining Current: ${player.getMeta("lobby::data").status}`);
-      if (player.getMeta("lobby::data").status !== LobbyStatus.Init) {
+      if (lobbyData.status !== LobbyStatus.Init) {
          logStream(`${player.name} failed to join the Lobby.`, LogTypes.Lobby);
       }
 
-      if (player.getMeta("lobby::data").status === LobbyStatus.Init) {
+      if (lobbyData.status === LobbyStatus.Init) {
          player.setMeta("lobby::data", { status: LobbyStatus.Joining });
          console.log(
             `Joining Changed: ${player.getMeta("lobby::data").status}`
@@ -33,13 +36,15 @@ export class PlayerManager {
     * @param  {alt.Player} player
     */
    public static ready(player: alt.Player) {
-      if (player.getMeta("lobby::data").status === LobbyStatus.Joining) {
+      let lobbyData: ILobbyData = player.getMeta("lobby::data");
+
+      if (lobbyData.status === LobbyStatus.Joining) {
          player.setMeta("lobby::data", { status: LobbyStatus.Ready });
 
          logStream(`${player.name} set Ready.`, LogTypes.Lobby);
       }
 
-      if (player.getMeta("lobby::data").status === LobbyStatus.Ready)
+      if (lobbyData.status === LobbyStatus.Ready)
          return console.log(player.name + " Status already ready.");
    }
 
