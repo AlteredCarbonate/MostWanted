@@ -198,7 +198,7 @@ export class TimerManager {
 
       this._timerInter = alt.setInterval(() => {
          var timer = Math.floor(moment().diff(timeDiff) / 1000);
-         if (timer < 1) {
+         if (timer < 0) {
             // Outputting Timer
             console.log(timer);
          } else {
