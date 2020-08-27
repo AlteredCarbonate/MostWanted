@@ -6,27 +6,6 @@ import { TimerTypes } from "../../enums/TimerTypes";
 import * as moment from "moment";
 import { Config } from "../../configuration/config";
 
-/* class MyDummyClass {
-   static _instance: MyDummyClass;
-   _player: alt.Player;
-
-   private constructor(player: alt.Player) {
-      this._player = player;
-   }
-
-   public static getInstance(player: alt.Player) {
-      if (this._instance) return this._instance;
-      return (this._instance = new this(player));
-   }
-
-   public moo() {
-      alt.log(`Moo Mr. ${this._player.name}`);
-   }
-}
-Wie mach ich denn nun bspw. PlayerManager.join(player)?
-
-let Manager = PlayerManager.getInstance(player);
-Manager.join(Player) <-- ? */
 export class PlayerManager {
    static _instance: PlayerManager;
    // _player: alt.Player;
@@ -178,7 +157,7 @@ export class GameManager {
                return logStream("Start Lobby (Prepared)", LogTypes.Lobby);
             } else {
                // TIME UNPREPARED
-               _TimerManager.start(this._player, TimerTypes.Default);
+               _TimerManager.start(this._player, TimerTypes.Unprep);
                return logStream("Start Lobby (Unprepared)", LogTypes.Lobby);
             }
          }
@@ -201,15 +180,19 @@ export class TimerManager {
       return this._instance || (this._instance = new this());
    }
 
-   public start(player: alt.Player, type: TimerTypes = TimerTypes.Default) {
+   public start(player, type: TimerTypes = TimerTypes.Default) {
       let timeDiff;
       if (type === TimerTypes.Default) {
          logStream("Default Timer started", LogTypes.Lobby);
+         alt.emitClient(player, "system::lobby:localTimer", TimerTypes.Default);
+
          timeDiff = moment().add(Config.defaultTimer, "ms");
       }
 
       if (type === TimerTypes.Unprep) {
          logStream("Unprepared Timer started", LogTypes.Lobby);
+         alt.emitClient(player, "system::lobby:localTimer", TimerTypes.Unprep);
+
          timeDiff = moment().add(Config.unprepTimer, "ms");
       }
 
@@ -223,15 +206,14 @@ export class TimerManager {
 
             if (type === TimerTypes.Default) {
                logStream("Default Timer finished", LogTypes.Lobby);
+               this._isStarted = false;
             }
 
             if (type === TimerTypes.Unprep) {
                logStream("Unprepared Timer finished", LogTypes.Lobby);
+               this._isStarted = false;
             }
          }
       }, 1000);
-
-      // Misses eventCatcher Clientside (?)
-      // alt.emitClient(player, "system::lobby:localTimer", TimerTypes.Default);
    }
 }
