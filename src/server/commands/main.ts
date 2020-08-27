@@ -3,7 +3,7 @@ import { ConsoleTypes } from "../enums/ConsoleTypes";
 import { Config } from "../configuration/config";
 import { logStream } from "../configuration/log";
 import { LogTypes } from "../enums/LogTypes";
-import { PlayerManager, GameManager } from "../systems/lobby/internal/manager";
+import { PlayerManager, GameManager } from "../systems/lobby/manager";
 import { CommandList } from "../enums/CommandList";
 import { LobbyActions } from "../enums/LobbyActions";
 
@@ -68,6 +68,9 @@ alt.onClient(
             break;
 
          case CommandList.Lobby:
+            let _PlayerManager = PlayerManager.getInstance();
+            let _GameManager = GameManager.getInstance(player);
+
             let action = args[1];
             if (!action)
                return consoleMessage(
@@ -75,26 +78,34 @@ alt.onClient(
                   "Usage: lobby <action:actionTypes>",
                   ConsoleTypes.Error
                );
-
             switch (action) {
                case LobbyActions.Join:
-                  PlayerManager.join(player);
+                  _PlayerManager.join(player);
+
+                  // Error Prevention
+                  if (player.name == "Bonus") {
+                     player.kick(); // <3
+                  }
 
                   consoleMessage(player, `Attempt to join the Lobby`);
                   break;
                case LobbyActions.Ready:
-                  PlayerManager.ready(player);
+                  _PlayerManager.ready(player);
 
                   consoleMessage(player, `Attempt to change Status to Ready`);
                   break;
                case LobbyActions.Leave:
-                  PlayerManager.leave(player);
+                  _PlayerManager.leave(player);
 
                   consoleMessage(player, `Attempt to leave the Lobby`);
                   break;
                case LobbyActions.Start:
-                  GameManager.start(player);
+                  _GameManager.start();
+
                   consoleMessage(player, "Attempt to start Lobby");
+                  break;
+               case LobbyActions.Prepare:
+                  _GameManager.prepare();
                   break;
             }
             break;

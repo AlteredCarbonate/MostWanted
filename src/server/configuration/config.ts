@@ -5,15 +5,18 @@ export const Config = {
       y: -787.5165,
       z: 30.0212,
    },
-   // Player Data
+   //  Data
    defaultPlayerCash: 500.0, // Starting Cash
+   vehiclePlateName: "MW",
    // Timers
    // - Player
    timeRewardTime: 60000 * 5, // How much time before a reward point is added.
    timePlayerSaveTime: 60000 * 2, // How many minutes before we save all player data.
+   // - Lobby
+   defaultTimer: 60000 * 0.25, // Default timer is 1 Minute
+   unprepTimer: 60000 * 1.5, // Unprepared timer is 1.5 Minutes
    // - Vehicle
-   vehicleSaveTime: 60000 * 5, // 5 Minutes
-   vehiclePlateName: "MW",
+   // vehicleSaveTime: 60000 * 5, // 5 Minutes
    // Weather
    weatherCycleTime: 60000 * 5, // 5 Minutes
    weatherCycle: [

@@ -3,4 +3,5 @@ export enum LobbyActions {
    Ready = "ready",
    Leave = "leave",
    Start = "start",
+   Prepare = "prep",
 }
