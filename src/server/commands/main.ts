@@ -3,9 +3,10 @@ import { ConsoleTypes } from "../enums/ConsoleTypes";
 import { Config } from "../configuration/config";
 import { logStream } from "../configuration/log";
 import { LogTypes } from "../enums/LogTypes";
-import { PlayerManager, GameManager } from "../systems/lobby/manager";
 import { CommandList } from "../enums/CommandList";
 import { LobbyActions } from "../enums/LobbyActions";
+import { PlayerManager } from "../systems/lobby/manager/PlayerManager";
+import { GameManager } from "../systems/lobby/manager/GameManager";
 
 alt.onClient(
    "consoleCommand::command",
@@ -68,7 +69,7 @@ alt.onClient(
             break;
 
          case CommandList.Lobby:
-            let _PlayerManager = PlayerManager.getInstance();
+            let _PlayerManager = PlayerManager.getInstance(player);
             let _GameManager = GameManager.getInstance(player);
 
             let action = args[1];
@@ -106,6 +107,12 @@ alt.onClient(
                   break;
                case LobbyActions.Prepare:
                   _GameManager.prepare();
+                  break;
+               case LobbyActions.Stop:
+                  _GameManager.stop();
+
+                  consoleMessage(player, "Attempt to stop Lobby");
+
                   break;
             }
             break;

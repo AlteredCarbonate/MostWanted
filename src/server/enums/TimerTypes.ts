@@ -1,4 +1,4 @@
 export enum TimerTypes {
-   Default,
-   Unprep,
+   Prep = "Prepared",
+   Unprep = "Unprepared",
 }

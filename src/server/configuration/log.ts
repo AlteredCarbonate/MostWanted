@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as alt from "alt-server";
-import moment = require("moment");
+import * as moment from "moment";
 import { LogTypes } from "../enums/LogTypes";
 
 export function log(message: any) {

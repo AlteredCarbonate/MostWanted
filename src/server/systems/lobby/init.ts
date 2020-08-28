@@ -1,12 +1,13 @@
 import * as alt from "alt-server";
-import { PlayerManager, TimerManager } from "./manager";
 import { LobbyStatus } from "../../enums/LobbyStatus";
 import { TimerTypes } from "../../enums/TimerTypes";
+import { PlayerManager } from "./manager/PlayerManager";
+import { TimerManager } from "./manager/TimerManager";
 
 let _PlayerManager;
 alt.on("system:lobby::init", (player) => {
    player.setMeta("player:lobby::data", { status: LobbyStatus.Init });
-   _PlayerManager = PlayerManager.getInstance();
+   _PlayerManager = PlayerManager.getInstance(player);
 });
 
 alt.onClient("system:lobby::ready", (player: alt.Player) => {
