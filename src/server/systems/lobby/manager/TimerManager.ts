@@ -1,6 +1,6 @@
 import * as alt from "alt-server";
 import * as moment from "moment";
-import { TimerTypes } from "../../../enums/TimerTypes";
+import { TimerTypes } from "../../../enums/systems/TimerTypes";
 import { logStream } from "../../../configuration/log";
 import { LogTypes } from "../../../enums/LogTypes";
 import { Config } from "../../../configuration/config";
@@ -24,56 +24,71 @@ export class TimerManager {
     * @param  {TimerTypes=TimerTypes.Prep} type
     * @returns void
     */
-   public start(player, type: TimerTypes = TimerTypes.Prep): void {
-      let timeDiff;
-      if (!this._isStarted) {
-         this._type = type;
-         this._isStarted = true;
+   public start(player, type: TimerTypes = TimerTypes.Prep): Promise<string> {
+      let diff, countDown;
+      this._type = type;
 
-         switch (type) {
-            case TimerTypes.Unprep:
-               timeDiff = moment().add(Config.unprepTimer, "ms");
-               break;
+      return new Promise((resolve, reject) => {
+         if (this._isStarted) {
+            logStream("Timer already running", LogTypes.Lobby);
+            reject("RunningAlready");
+         }
 
-            default:
-               timeDiff = moment().add(Config.defaultTimer, "ms");
-               break;
+         if (type === TimerTypes.Prep) {
+            diff = moment().add(Config.defaultTimer, "ms");
+         }
+         if (type === TimerTypes.Unprep) {
+            diff = moment().add(Config.unprepTimer, "ms");
          }
 
          alt.emitClient(player, "system::lobby:localTimer", type);
          logStream(`Timer started (${type})`, LogTypes.Lobby);
 
+         this._isStarted = true;
          this._timerInter = alt.setInterval(() => {
-            var timer = Math.floor(moment().diff(timeDiff) / 1000);
-            if (timer < 0) {
+            countDown = Math.floor(moment().diff(diff) / 1000);
+            if (countDown < 0) {
                // Outputting Timer
-               console.log(timer);
+               console.log(countDown);
                return;
             } else {
                logStream(`Timer finished (${type})`, LogTypes.Lobby);
-               this._isStarted = false;
+               this.reset();
 
-               alt.clearInterval(this._timerInter);
+               resolve("Finished");
             }
          }, 1000);
-      } else {
-         logStream("Timer already running", LogTypes.Lobby);
-      }
+      });
    }
    /**
     * Stops the started Timer, requires to be started first.
-    * @returns void
+    * @returns Promise
     */
-   public stop(): void {
-      if (!this._isStarted)
-         return logStream("Can't stop, unstarted Timer.", LogTypes.Lobby);
+   public stop(): Promise<string> {
+      return new Promise((resolve, reject) => {
+         if (!this._isStarted) {
+            logStream("Can't stop, unstarted Timer.", LogTypes.Lobby);
+            reject("Unstarted");
+         }
 
-      alt.clearInterval(this._timerInter);
-      logStream(`Timer stopped (${this._type})`, LogTypes.Lobby);
-      this.reset();
+         logStream(`Timer stopped (${this._type})`, LogTypes.Lobby);
+         this.reset();
+         resolve("Stopped");
+      });
+   }
+   public restart(invoke: TimerTypes): void {
+      // Needed if conditions change
+
+      if (invoke === TimerTypes.Prep) {
+         // INVOKE PREP
+      }
+      if (invoke === TimerTypes.Unprep) {
+         // INVOKE PREP
+      }
    }
 
    private reset(): void {
       this._isStarted = false;
+      alt.clearInterval(this._timerInter);
    }
 }

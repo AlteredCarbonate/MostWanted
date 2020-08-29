@@ -4,7 +4,7 @@ import { Config } from "../configuration/config";
 import { logStream } from "../configuration/log";
 import { LogTypes } from "../enums/LogTypes";
 import { CommandList } from "../enums/CommandList";
-import { LobbyActions } from "../enums/LobbyActions";
+import { LobbyActions } from "../enums/systems/LobbyActions";
 import { PlayerManager } from "../systems/lobby/manager/PlayerManager";
 import { GameManager } from "../systems/lobby/manager/GameManager";
 

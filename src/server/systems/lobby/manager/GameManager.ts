@@ -1,6 +1,6 @@
 import * as alt from "alt-server";
-import { LobbyStatus } from "../../../enums/LobbyStatus";
-import { TimerTypes } from "../../../enums/TimerTypes";
+import { LobbyStatus } from "../../../enums/systems/LobbyStatus";
+import { TimerTypes } from "../../../enums/systems/TimerTypes";
 import { logStream } from "../../../configuration/log";
 import { LogTypes } from "../../../enums/LogTypes";
 import { TimerManager } from "./TimerManager";
@@ -77,14 +77,33 @@ export class GameManager {
                // TIMER PREPARED
                if (!this._TimerManager._isStarted) {
                   logStream("Start Lobby (Prepared)", LogTypes.Lobby);
-                  this._TimerManager.start(this._player, TimerTypes.Prep);
+                  this._TimerManager
+                     .start(this._player, TimerTypes.Prep)
+                     .then((res) => {
+                        if (res == "Finished") {
+                           logStream(
+                              `Lobby Starting...(${this._TimerManager._type})`,
+                              LogTypes.Lobby
+                           );
+                        }
+                     });
                }
                return;
             } else {
                // TIME UNPREPARED
                if (!this._TimerManager._isStarted) {
                   logStream("Start Lobby (Unprepared)", LogTypes.Lobby);
-                  this._TimerManager.start(this._player, TimerTypes.Unprep);
+
+                  this._TimerManager
+                     .start(this._player, TimerTypes.Unprep)
+                     .then((res) => {
+                        if (res == "Finished") {
+                           logStream(
+                              `Lobby Starting...(${this._TimerManager._type})`,
+                              LogTypes.Lobby
+                           );
+                        }
+                     });
                }
                return;
             }
@@ -93,12 +112,20 @@ export class GameManager {
       return logStream("Unable to start Lobby", LogTypes.Lobby);
    }
    /**
-    * Stops the current Game, due any reasons
+    * Stops the Lobby
     * @returns void
     */
    public stop(): void {
-      this._TimerManager.stop();
-      this.reset();
+      this._TimerManager.stop().then((res) => {
+         if (res == "Stopped") {
+            logStream(
+               `Lobby stopped (${this._TimerManager._type})`,
+               LogTypes.Lobby
+            );
+
+            this.reset();
+         }
+      });
    }
 
    public restart(): void {}

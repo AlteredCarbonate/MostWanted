@@ -1,6 +1,6 @@
 import * as alt from "alt-server";
-import { LobbyStatus } from "../../enums/LobbyStatus";
-import { TimerTypes } from "../../enums/TimerTypes";
+import { LobbyStatus } from "../../enums/systems/LobbyStatus";
+import { TimerTypes } from "../../enums/systems/TimerTypes";
 import { PlayerManager } from "./manager/PlayerManager";
 import { TimerManager } from "./manager/TimerManager";
 

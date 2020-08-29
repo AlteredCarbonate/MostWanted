@@ -1,6 +1,6 @@
 import * as alt from "alt-server";
 import { logStream } from "../../../configuration/log";
-import { LobbyStatus } from "../../../enums/LobbyStatus";
+import { LobbyStatus } from "../../../enums/systems/LobbyStatus";
 import { LogTypes } from "../../../enums/LogTypes";
 
 export class PlayerManager {
