@@ -25,3 +25,24 @@ function handshake(player: alt.Player) {
       player.health = 200;
    });
 }
+
+// alt.on(
+//    "explosion",
+//    (
+//       source: alt.Entity,
+//       type: number,
+//       pos: alt.Vector3,
+//       id: number,
+//       target: alt.Entity
+//    ) => {
+//       console.log(
+//          `source:${source} source.type ${source.type} type:${type} target: ${target}`
+//       );
+//       // return false; // Cancels Event
+//       if (target instanceof alt.Vehicle) {
+//          console.log("An Vehicle explode, removing");
+
+//          target.destroy();
+//       }
+//    }
+// );

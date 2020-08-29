@@ -77,20 +77,20 @@ export class GameManager {
                // TIMER PREPARED
                if (!this._TimerManager._isStarted) {
                   logStream("Start Lobby (Prepared)", LogTypes.Lobby);
+                  this._TimerManager.start(this._player, TimerTypes.Prep);
                }
-               this._TimerManager.start(this._player, TimerTypes.Prep);
                return;
             } else {
                // TIME UNPREPARED
                if (!this._TimerManager._isStarted) {
                   logStream("Start Lobby (Unprepared)", LogTypes.Lobby);
+                  this._TimerManager.start(this._player, TimerTypes.Unprep);
                }
-               this._TimerManager.start(this._player, TimerTypes.Unprep);
                return;
             }
          }
       }
-      return logStream("Unable to start Lobby, not prepared", LogTypes.Lobby);
+      return logStream("Unable to start Lobby", LogTypes.Lobby);
    }
    /**
     * Stops the current Game, due any reasons
