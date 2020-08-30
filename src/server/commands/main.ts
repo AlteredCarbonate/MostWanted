@@ -1,12 +1,13 @@
 import * as alt from "alt-server";
+import * as log from "../configuration/log";
+
 import { ConsoleTypes } from "../enums/ConsoleTypes";
 import { Config } from "../configuration/config";
-import { logStream } from "../configuration/log";
 import { LogTypes } from "../enums/LogTypes";
 import { CommandList } from "../enums/CommandList";
 import { LobbyActions } from "../enums/systems/LobbyActions";
 import { PlayerManager } from "../systems/lobby/manager/PlayerManager";
-import { GameManager } from "../systems/lobby/manager/GameManager";
+import { LobbyManager } from "../systems/lobby/manager/LobbyManager";
 
 alt.onClient(
    "consoleCommand::command",
@@ -37,7 +38,7 @@ alt.onClient(
                );
                if (veh) {
                   veh.numberPlateText = Config.vehiclePlateName;
-                  logStream(
+                  log.stream(
                      `${player.name} spawned an ${vehName.toUpperCase()}.`,
                      LogTypes.Command
                   );
@@ -70,7 +71,7 @@ alt.onClient(
 
          case CommandList.Lobby:
             let _PlayerManager = PlayerManager.getInstance(player);
-            let _GameManager = GameManager.getInstance(player);
+            let _LobbyManager = LobbyManager.getInstance(player);
 
             let action = args[1];
             if (!action)
@@ -81,7 +82,7 @@ alt.onClient(
                );
             switch (action) {
                case LobbyActions.Join:
-                  _PlayerManager.join(player);
+                  _PlayerManager.join();
 
                   // Error Prevention
                   if (player.name == "Bonus") {
@@ -91,25 +92,25 @@ alt.onClient(
                   consoleMessage(player, `Attempt to join the Lobby`);
                   break;
                case LobbyActions.Ready:
-                  _PlayerManager.ready(player);
+                  _PlayerManager.ready();
 
                   consoleMessage(player, `Attempt to change Status to Ready`);
                   break;
                case LobbyActions.Leave:
-                  _PlayerManager.leave(player);
+                  _PlayerManager.leave();
 
                   consoleMessage(player, `Attempt to leave the Lobby`);
                   break;
                case LobbyActions.Start:
-                  _GameManager.start();
+                  _LobbyManager.start();
 
                   consoleMessage(player, "Attempt to start Lobby");
                   break;
                case LobbyActions.Prepare:
-                  _GameManager.prepare();
+                  _LobbyManager.prepare();
                   break;
                case LobbyActions.Stop:
-                  _GameManager.stop();
+                  _LobbyManager.stop();
 
                   consoleMessage(player, "Attempt to stop Lobby");
 

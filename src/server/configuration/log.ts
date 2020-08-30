@@ -3,7 +3,7 @@ import * as alt from "alt-server";
 import * as moment from "moment";
 import { LogTypes } from "../enums/LogTypes";
 
-export function log(message: any) {
+export function console(message: any) {
    alt.log(message);
 }
 /**
@@ -11,7 +11,7 @@ export function log(message: any) {
  * @param  {any} message Define the set message
  * @param  {LogTypes=LogTypes.Undefined} type Default Undefined | Types Undefined; Server; Player;
  */
-export function logStream(message: any, type: LogTypes = LogTypes.Undefined) {
+export function stream(message: any, type: LogTypes = LogTypes.Undefined) {
    const date = moment().format("YYYY/MM/DD hh:mm:ss a");
 
    if (type == LogTypes.Undefined) {

@@ -1,3 +1,4 @@
 import "./PlayerManager";
-import "./GameManager";
+import "./LobbyManager";
 import "./TimerManager";
+import "./GameManager";

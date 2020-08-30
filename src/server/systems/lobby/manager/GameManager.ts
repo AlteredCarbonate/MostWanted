@@ -1,22 +1,14 @@
 import * as alt from "alt-server";
-import { LobbyStatus } from "../../../enums/systems/LobbyStatus";
-import { TimerTypes } from "../../../enums/systems/TimerTypes";
-import { logStream } from "../../../configuration/log";
+
+import * as log from "../../../configuration/log";
 import { LogTypes } from "../../../enums/LogTypes";
-import { TimerManager } from "./TimerManager";
 
 export class GameManager {
    static _instance: GameManager;
-   _TimerManager: TimerManager;
-   _readyPlayers: number;
-   _preparedPlayers: number;
    _player: alt.Player;
 
    private constructor(player: alt.Player) {
-      this._preparedPlayers = 0;
-      this._readyPlayers = 0;
       this._player = player;
-      this._TimerManager = TimerManager.getInstance();
    }
 
    /**
@@ -26,112 +18,26 @@ export class GameManager {
       return this._instance || (this._instance = new this(player));
    }
 
-   /**
-    * Setting Lobby Data for the Player
-    * @param  {any} value
-    */
-   private setMeta(value: any): void {
-      this._player.setMeta("player:lobby::data", value);
-   }
+   public start(cooldown: number = 5) {
+      console.log("GAMEMANGER::START");
 
-   /**
-    * Retrieving Lobby Data for the Player
-    */
-   private getMeta(): any {
-      return this._player.getMeta("player:lobby::data");
-   }
-
-   /**
-    * Prepares the Lobby, setting the position vehicle and similar
-    */
-   public prepare(): void {
-      if (!this._player.valid) return;
-      if (this.getMeta().status === LobbyStatus.Ready) {
-         console.log("player ready");
-
-         this.setMeta({
-            status: LobbyStatus.Prepared,
-         });
-
-         this._readyPlayers += 1;
-         // alt.emit("system:lobby::prepare", false);
-         this;
+      if (cooldown) {
+         // Display Timer & then Start
+         log.stream(
+            `TEMP: Starting Game... (Cooldown ${cooldown})`,
+            LogTypes.Lobby
+         );
+         alt.emitClient(this._player, "system:game::start", cooldown);
+      } else {
+         // Start without Cooldown
+         log.stream("TEMP: Starting Game... (No Cooldown)", LogTypes.Lobby);
+         alt.emitClient(this._player, "system:game::start");
       }
    }
-   /**
-    * Emmits Game Start
-    * @returns void
-    */
-   public start(): void {
-      for (let playerAll of alt.Player.all) {
-         if (
-            playerAll.getMeta("player:lobby::data").status ===
-            LobbyStatus.Prepared
-         ) {
-            this._preparedPlayers += 1;
 
-            console.log(`readyPlayers: ${this._readyPlayers}`);
-            console.log(`preparedPlayers: ${this._preparedPlayers}`);
-
-            if (this._readyPlayers <= this._preparedPlayers) {
-               // TIMER PREPARED
-               if (!this._TimerManager._isStarted) {
-                  logStream("Start Lobby (Prepared)", LogTypes.Lobby);
-                  this._TimerManager
-                     .start(this._player, TimerTypes.Prep)
-                     .then((res) => {
-                        if (res == "Finished") {
-                           logStream(
-                              `Lobby Starting...(${this._TimerManager._type})`,
-                              LogTypes.Lobby
-                           );
-                        }
-                     });
-               }
-               return;
-            } else {
-               // TIME UNPREPARED
-               if (!this._TimerManager._isStarted) {
-                  logStream("Start Lobby (Unprepared)", LogTypes.Lobby);
-
-                  this._TimerManager
-                     .start(this._player, TimerTypes.Unprep)
-                     .then((res) => {
-                        if (res == "Finished") {
-                           logStream(
-                              `Lobby Starting...(${this._TimerManager._type})`,
-                              LogTypes.Lobby
-                           );
-                        }
-                     });
-               }
-               return;
-            }
-         }
-      }
-      return logStream("Unable to start Lobby", LogTypes.Lobby);
-   }
-   /**
-    * Stops the Lobby
-    * @returns void
-    */
-   public stop(): void {
-      this._TimerManager.stop().then((res) => {
-         if (res == "Stopped") {
-            logStream(
-               `Lobby stopped (${this._TimerManager._type})`,
-               LogTypes.Lobby
-            );
-
-            this.reset();
-         }
-      });
+   public stop() {
+      alt.emitClient(this._player, "system:game::stop");
    }
 
-   public restart(): void {}
-
-   private reset(): void {
-      this._preparedPlayers = 0;
-      this._readyPlayers = 0;
-   }
+   public restart() {}
 }

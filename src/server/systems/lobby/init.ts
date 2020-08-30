@@ -1,8 +1,8 @@
 import * as alt from "alt-server";
 import { LobbyStatus } from "../../enums/systems/LobbyStatus";
-import { TimerTypes } from "../../enums/systems/TimerTypes";
+// import { TimerTypes } from "../../enums/systems/TimerTypes";
 import { PlayerManager } from "./manager/PlayerManager";
-import { TimerManager } from "./manager/TimerManager";
+// import { TimerManager } from "./manager/TimerManager";
 
 let _PlayerManager;
 alt.on("system:lobby::init", (player) => {
@@ -11,22 +11,22 @@ alt.on("system:lobby::init", (player) => {
 });
 
 alt.onClient("system:lobby::ready", (player: alt.Player) => {
-   _PlayerManager.ready(player);
+   _PlayerManager.ready();
 });
 
 alt.onClient("system:lobby::join", (player: alt.Player) => {
-   _PlayerManager.join(player);
+   _PlayerManager.join();
 });
 
-alt.on(
-   "system:lobby::prepare",
-   (player: alt.Player, state: boolean = false) => {
-      console.log("system:lobby::prepare");
-      let _TimerManager = TimerManager.getInstance();
+// alt.on(
+//    "system:lobby::prepare",
+//    (player: alt.Player, state: boolean = false) => {
+//       console.log("system:lobby::prepare");
+//       let _TimerManager = TimerManager.getInstance(player);
 
-      if (!state) {
-         _TimerManager.start(player, TimerTypes.Unprep);
-         state = true;
-      }
-   }
-);
+//       if (!state) {
+//          _TimerManager.start(TimerTypes.Unprep);
+//          state = true;
+//       }
+//    }
+// );

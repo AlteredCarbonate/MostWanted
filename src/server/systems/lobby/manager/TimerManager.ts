@@ -1,36 +1,40 @@
 import * as alt from "alt-server";
 import * as moment from "moment";
 import { TimerTypes } from "../../../enums/systems/TimerTypes";
-import { logStream } from "../../../configuration/log";
+import * as log from "../../../configuration/log";
 import { LogTypes } from "../../../enums/LogTypes";
 import { Config } from "../../../configuration/config";
+import { TimerCB } from "../../../enums/systems/TimerCB";
 
 export class TimerManager {
    static _instance: TimerManager;
+   _player: alt.Player;
    _isStarted: boolean = false;
    _timerInter: number;
    _type: TimerTypes;
 
-   private constructor() {}
+   private constructor(player: alt.Player) {
+      this._player = player;
+   }
 
    /**
     * Gets the current Instance of the Manager
     */
-   public static getInstance(): TimerManager {
-      return this._instance || (this._instance = new this());
+   public static getInstance(player: alt.Player): TimerManager {
+      return this._instance || (this._instance = new this(player));
    }
    /**
-    * Start a timer (Countdown)
+    * Start the timer (Countdown)
     * @param  {TimerTypes=TimerTypes.Prep} type
-    * @returns void
+    * @returns Promise
     */
-   public start(player, type: TimerTypes = TimerTypes.Prep): Promise<string> {
+   public start(type: TimerTypes = TimerTypes.Prep): Promise<string> {
       let diff, countDown;
       this._type = type;
 
       return new Promise((resolve, reject) => {
          if (this._isStarted) {
-            logStream("Timer already running", LogTypes.Lobby);
+            log.stream("Timer already running", LogTypes.Lobby);
             reject("RunningAlready");
          }
 
@@ -41,8 +45,8 @@ export class TimerManager {
             diff = moment().add(Config.unprepTimer, "ms");
          }
 
-         alt.emitClient(player, "system::lobby:localTimer", type);
-         logStream(`Timer started (${type})`, LogTypes.Lobby);
+         alt.emitClient(this._player, "system:lobby::localTimer", type);
+         log.stream(`Timer started (${type})`, LogTypes.Lobby);
 
          this._isStarted = true;
          this._timerInter = alt.setInterval(() => {
@@ -52,39 +56,38 @@ export class TimerManager {
                console.log(countDown);
                return;
             } else {
-               logStream(`Timer finished (${type})`, LogTypes.Lobby);
+               log.stream(`Timer finished (${type})`, LogTypes.Lobby);
                this.reset();
 
-               resolve("Finished");
+               resolve(TimerCB.Finished);
             }
          }, 1000);
       });
    }
    /**
-    * Stops the started Timer, requires to be started first.
+    * Stops the started Timer
     * @returns Promise
     */
    public stop(): Promise<string> {
       return new Promise((resolve, reject) => {
          if (!this._isStarted) {
-            logStream("Can't stop, unstarted Timer.", LogTypes.Lobby);
-            reject("Unstarted");
+            log.stream("Can't stop, unstarted Timer.", LogTypes.Lobby);
+            reject(TimerCB.Unstarted);
          }
 
-         logStream(`Timer stopped (${this._type})`, LogTypes.Lobby);
+         log.stream(`Timer stopped (${this._type})`, LogTypes.Lobby);
          this.reset();
-         resolve("Stopped");
+         resolve(TimerCB.Stopped);
       });
    }
+   /**
+    * Restarts Timer, starts a new one with invoke
+    * @param  {TimerTypes} invoke
+    * @returns void
+    */
    public restart(invoke: TimerTypes): void {
-      // Needed if conditions change
-
-      if (invoke === TimerTypes.Prep) {
-         // INVOKE PREP
-      }
-      if (invoke === TimerTypes.Unprep) {
-         // INVOKE PREP
-      }
+      this.reset();
+      this.start(invoke);
    }
 
    private reset(): void {
