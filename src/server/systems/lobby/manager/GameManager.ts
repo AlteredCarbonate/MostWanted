@@ -2,6 +2,7 @@ import * as alt from "alt-server";
 
 import * as log from "../../../configuration/log";
 import { LogTypes } from "../../../enums/LogTypes";
+import { EventTypes } from "../../../enums/systems/EventTypes";
 
 export class GameManager {
    static _instance: GameManager;
@@ -27,16 +28,16 @@ export class GameManager {
             `TEMP: Starting Game... (Cooldown ${cooldown})`,
             LogTypes.Lobby
          );
-         alt.emitClient(this._player, "system:game::start", cooldown);
+         alt.emitClient(this._player, EventTypes.systemGameStart, cooldown);
       } else {
          // Start without Cooldown
          log.stream("TEMP: Starting Game... (No Cooldown)", LogTypes.Lobby);
-         alt.emitClient(this._player, "system:game::start");
+         alt.emitClient(this._player, EventTypes.systemGameStart);
       }
    }
 
    public stop() {
-      alt.emitClient(this._player, "system:game::stop");
+      alt.emitClient(this._player, EventTypes.systemGameStop);
    }
 
    public restart() {}

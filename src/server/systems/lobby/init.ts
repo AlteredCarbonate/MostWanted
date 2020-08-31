@@ -4,17 +4,24 @@ import { LobbyStatus } from "../../enums/systems/LobbyStatus";
 import { PlayerManager } from "./manager/PlayerManager";
 // import { TimerManager } from "./manager/TimerManager";
 
-let _PlayerManager;
-alt.on("system:lobby::init", (player) => {
-   player.setMeta("player:lobby::data", { status: LobbyStatus.Init });
+let _PlayerManager: PlayerManager;
+let _index: number = 0;
+
+alt.on("system:lobby::init", (player: alt.Player) => {
+   _index += 1;
+   console.log(`Player Index: ${_index}`);
+   player.setMeta("player:lobby::data", {
+      index: _index,
+      status: LobbyStatus.Init,
+   });
    _PlayerManager = PlayerManager.getInstance(player);
 });
 
-alt.onClient("system:lobby::ready", (player: alt.Player) => {
+alt.onClient("system:lobby::ready", () => {
    _PlayerManager.ready();
 });
 
-alt.onClient("system:lobby::join", (player: alt.Player) => {
+alt.onClient("system:lobby::join", () => {
    _PlayerManager.join();
 });
 

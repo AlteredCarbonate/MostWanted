@@ -25,8 +25,6 @@ export class TimerManager {
    }
    /**
     * Start the timer (Countdown)
-    * @param  {TimerTypes=TimerTypes.Prep} type
-    * @returns Promise
     */
    public start(type: TimerTypes = TimerTypes.Prep): Promise<string> {
       let diff, countDown;
@@ -66,7 +64,6 @@ export class TimerManager {
    }
    /**
     * Stops the started Timer
-    * @returns Promise
     */
    public stop(): Promise<string> {
       return new Promise((resolve, reject) => {
@@ -82,8 +79,6 @@ export class TimerManager {
    }
    /**
     * Restarts Timer, starts a new one with invoke
-    * @param  {TimerTypes} invoke
-    * @returns void
     */
    public restart(invoke: TimerTypes): void {
       this.reset();

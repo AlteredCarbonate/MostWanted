@@ -9,6 +9,7 @@ import { TimerCB } from "../../../enums/systems/TimerCB";
 import { TimerManager } from "./TimerManager";
 import { PlayerManager } from "./PlayerManager";
 import { GameManager } from "./GameManager";
+import { EventTypes } from "../../../enums/systems/EventTypes";
 
 export class LobbyManager {
    static _instance: LobbyManager;
@@ -50,7 +51,7 @@ export class LobbyManager {
          });
 
          this._readyPlayers += 1;
-         alt.emitClient(this._player, "system:lobby::prepare");
+         alt.emitClient(this._player, EventTypes.systemLobbyPrepare);
          this;
       }
    }
@@ -145,7 +146,7 @@ export class LobbyManager {
     */
    public init(): void {
       log.console("LobbyManager::INIT");
-      alt.emitClient(this._player, "system:lobby::localTimer");
+      alt.emitClient(this._player, EventTypes.systemLobbylocalTimer);
 
       this._GameManager.start(5);
    }
