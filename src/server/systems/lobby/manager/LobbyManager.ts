@@ -17,13 +17,11 @@ export class LobbyManager {
    _GameManager: GameManager;
 
    _readyPlayers: number;
-   _preparedPlayers: number;
    _player: alt.Player;
 
    private constructor(player: alt.Player) {
-      this._preparedPlayers = 0;
-      this._readyPlayers = 0;
       this._player = player;
+      this._readyPlayers = 0;
 
       this._TimerManager = TimerManager.getInstance(player);
       this._PlayerManager = PlayerManager.getInstance(player);
@@ -58,55 +56,46 @@ export class LobbyManager {
     * @returns void
     */
    public start(): void {
-      for (let playerAll of alt.Player.all) {
-         if (
-            playerAll.getMeta("player:lobby::data").status ===
-            LobbyStatus.Prepared
-         ) {
-            this._preparedPlayers += 1;
+      console.log(`readyPlayers: ${this._readyPlayers}`);
+      console.log(`allPlayers: ${alt.Player.all.length}`);
 
-            console.log(`readyPlayers: ${this._readyPlayers}`);
-            console.log(`preparedPlayers: ${this._preparedPlayers}`);
+      this.check((state) => {
+         if (state) {
+            log.stream("State: True", LogTypes.Lobby);
+            if (!this._TimerManager._isStarted) {
+               log.stream("Start Lobby (Prepared)", LogTypes.Lobby);
+               this._TimerManager.start(TimerTypes.Prep, (type: TimerTypes) => {
+                  log.stream(`Lobby Starting...(${type})`, LogTypes.Lobby);
+                  log.console("Timerstart CB");
 
-            if (this._readyPlayers <= this._preparedPlayers) {
-               if (!this._TimerManager._isStarted) {
-                  log.stream("Start Lobby (Prepared)", LogTypes.Lobby);
-                  this._TimerManager.start(
-                     TimerTypes.Prep,
-                     (type: TimerTypes) => {
-                        log.stream(
-                           `Lobby Starting...(${type})`,
-                           LogTypes.Lobby
-                        );
-                        log.console("Timerstart CB");
+                  this.init(type);
+               });
+            }
+         } else {
+            log.stream("State: False", LogTypes.Lobby);
+            if (!this._TimerManager._isStarted) {
+               log.stream("Start Lobby (Unprepared)", LogTypes.Lobby);
 
-                        this.init(type);
-                     }
-                  );
-               }
-               return;
-            } else {
-               if (!this._TimerManager._isStarted) {
-                  log.stream("Start Lobby (Unprepared)", LogTypes.Lobby);
+               this._TimerManager.start(
+                  TimerTypes.Unprep,
+                  (type: TimerTypes) => {
+                     log.stream(`Lobby Starting...(${type})`, LogTypes.Lobby);
+                     log.console("Timerstart CB");
 
-                  this._TimerManager.start(
-                     TimerTypes.Unprep,
-                     (type: TimerTypes) => {
-                        log.stream(
-                           `Lobby Starting...(${type})`,
-                           LogTypes.Lobby
-                        );
-                        log.console("Timerstart CB");
-
-                        this.init(type);
-                     }
-                  );
-               }
-               return;
+                     this.init(type);
+                  }
+               );
             }
          }
-      }
-      return log.stream("Unable to start Lobby", LogTypes.Lobby);
+      });
+      // for (let playerAll of alt.Player.all) {
+      //    if (
+      //       playerAll.getMeta("player:lobby::data").status ===
+      //       LobbyStatus.Prepared
+      //    ) {
+      //    }
+      // }
+      // return log.stream("Unable to start Lobby", LogTypes.Lobby);
    }
    /**
     * Stops the Lobby
@@ -129,12 +118,10 @@ export class LobbyManager {
    public restart(): void {
       this.reset();
       this.start();
+
+      log.stream(`Lobby resetting`, LogTypes.Lobby);
    }
 
-   private reset(): void {
-      this._preparedPlayers = 0;
-      this._readyPlayers = 0;
-   }
    /**
     * Inits the Lobby
     * Sets Position, Vehicle and similar.
@@ -145,5 +132,17 @@ export class LobbyManager {
       alt.emitClient(this._player, EventTypes.systemLobbylocalTimer, type);
 
       this._GameManager.start(5);
+   }
+
+   public check(cb) {
+      if (this._readyPlayers <= alt.Player.all.length) {
+         cb(true);
+      } else {
+         cb(false);
+      }
+   }
+
+   private reset(): void {
+      this._readyPlayers = 0;
    }
 }

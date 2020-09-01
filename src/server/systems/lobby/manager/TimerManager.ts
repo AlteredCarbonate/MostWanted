@@ -42,9 +42,6 @@ export class TimerManager {
          diff = moment().add(Config.unprepTimer, "ms");
       }
 
-      // Callback
-      cb(type);
-
       this._isStarted = true;
       this._timerInter = alt.setInterval(() => {
          countDown = Math.floor(moment().diff(diff) / 1000);
@@ -54,6 +51,8 @@ export class TimerManager {
             return;
          } else {
             log.stream(`Timer finished (${type})`, LogTypes.Lobby);
+            // Callback
+            cb(type);
             this.reset();
          }
       }, 1000);
@@ -63,7 +62,7 @@ export class TimerManager {
     */
    public stop(cb) {
       if (!this._isStarted) {
-         log.stream("Can't stop, unstarted Timer.", LogTypes.Lobby);
+         log.stream("Can't stop unstarted Timer.", LogTypes.Lobby);
       }
 
       log.stream(`Timer stopped (${this._type})`, LogTypes.Lobby);
