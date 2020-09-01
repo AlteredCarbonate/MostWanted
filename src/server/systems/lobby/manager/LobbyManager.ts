@@ -4,7 +4,6 @@ import * as log from "../../../configuration/log";
 import { LobbyStatus } from "../../../enums/systems/LobbyStatus";
 import { TimerTypes } from "../../../enums/systems/TimerTypes";
 import { LogTypes } from "../../../enums/LogTypes";
-import { TimerCB } from "../../../enums/systems/TimerCB";
 
 import { TimerManager } from "./TimerManager";
 import { PlayerManager } from "./PlayerManager";
@@ -52,7 +51,6 @@ export class LobbyManager {
 
          this._readyPlayers += 1;
          alt.emitClient(this._player, EventTypes.systemLobbyPrepare);
-         this;
       }
    }
    /**
@@ -73,38 +71,36 @@ export class LobbyManager {
             if (this._readyPlayers <= this._preparedPlayers) {
                if (!this._TimerManager._isStarted) {
                   log.stream("Start Lobby (Prepared)", LogTypes.Lobby);
-                  this._TimerManager
-                     .start(TimerTypes.Prep)
-                     .then((res: TimerCB) => {
-                        if (res == TimerCB.Finished) {
-                           log.stream(
-                              `Lobby Starting...(${this._TimerManager._type})`,
-                              LogTypes.Lobby
-                           );
-                           log.console("Timerstart CB");
+                  this._TimerManager.start(
+                     TimerTypes.Prep,
+                     (type: TimerTypes) => {
+                        log.stream(
+                           `Lobby Starting...(${type})`,
+                           LogTypes.Lobby
+                        );
+                        log.console("Timerstart CB");
 
-                           this.init();
-                        }
-                     });
+                        this.init(type);
+                     }
+                  );
                }
                return;
             } else {
                if (!this._TimerManager._isStarted) {
                   log.stream("Start Lobby (Unprepared)", LogTypes.Lobby);
 
-                  this._TimerManager
-                     .start(TimerTypes.Unprep)
-                     .then((res: TimerCB) => {
-                        if (res == TimerCB.Finished) {
-                           log.stream(
-                              `Lobby Starting...(${this._TimerManager._type})`,
-                              LogTypes.Lobby
-                           );
-                           log.console("Timerstart CB");
+                  this._TimerManager.start(
+                     TimerTypes.Unprep,
+                     (type: TimerTypes) => {
+                        log.stream(
+                           `Lobby Starting...(${type})`,
+                           LogTypes.Lobby
+                        );
+                        log.console("Timerstart CB");
 
-                           this.init();
-                        }
-                     });
+                        this.init(type);
+                     }
+                  );
                }
                return;
             }
@@ -117,15 +113,13 @@ export class LobbyManager {
     * @returns void
     */
    public stop(): void {
-      this._TimerManager.stop().then((res: TimerCB) => {
-         if (res == TimerCB.Stopped) {
-            log.stream(
-               `Lobby stopped (${this._TimerManager._type})`,
-               LogTypes.Lobby
-            );
+      this._TimerManager.stop(() => {
+         log.stream(
+            `Lobby stopped (${this._TimerManager._type})`,
+            LogTypes.Lobby
+         );
 
-            this.reset();
-         }
+         this.reset();
       });
    }
    /**
@@ -146,9 +140,9 @@ export class LobbyManager {
     * Sets Position, Vehicle and similar.
     * @returns void
     */
-   public init(): void {
+   public init(type: TimerTypes): void {
       log.console("LobbyManager::INIT");
-      alt.emitClient(this._player, EventTypes.systemLobbylocalTimer);
+      alt.emitClient(this._player, EventTypes.systemLobbylocalTimer, type);
 
       this._GameManager.start(5);
    }
