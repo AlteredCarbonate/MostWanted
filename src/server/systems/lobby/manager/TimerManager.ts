@@ -5,6 +5,7 @@ import * as log from "../../../configuration/log";
 import { LogTypes } from "../../../enums/LogTypes";
 import { Config } from "../../../configuration/config";
 import { TimerCB } from "../../../enums/systems/TimerCB";
+import { EventTypes } from "../../../enums/systems/EventTypes";
 
 export class TimerManager {
    static _instance: TimerManager;
@@ -30,10 +31,9 @@ export class TimerManager {
       let diff, countDown;
       this._type = type;
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
          if (this._isStarted) {
             log.stream("Timer already running", LogTypes.Lobby);
-            reject("RunningAlready");
          }
 
          if (type === TimerTypes.Prep) {
@@ -43,7 +43,7 @@ export class TimerManager {
             diff = moment().add(Config.unprepTimer, "ms");
          }
 
-         alt.emitClient(this._player, "system:lobby::localTimer", type);
+         alt.emitClient(this._player, EventTypes.systemLobbylocalTimer, type);
          log.stream(`Timer started (${type})`, LogTypes.Lobby);
 
          this._isStarted = true;
@@ -66,10 +66,9 @@ export class TimerManager {
     * Stops the started Timer
     */
    public stop(): Promise<string> {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
          if (!this._isStarted) {
             log.stream("Can't stop, unstarted Timer.", LogTypes.Lobby);
-            reject(TimerCB.Unstarted);
          }
 
          log.stream(`Timer stopped (${this._type})`, LogTypes.Lobby);

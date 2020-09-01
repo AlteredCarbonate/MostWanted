@@ -81,6 +81,7 @@ export class LobbyManager {
                               `Lobby Starting...(${this._TimerManager._type})`,
                               LogTypes.Lobby
                            );
+                           log.console("Timerstart CB");
 
                            this.init();
                         }
@@ -99,6 +100,7 @@ export class LobbyManager {
                               `Lobby Starting...(${this._TimerManager._type})`,
                               LogTypes.Lobby
                            );
+                           log.console("Timerstart CB");
 
                            this.init();
                         }

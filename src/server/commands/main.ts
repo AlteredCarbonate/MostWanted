@@ -9,6 +9,9 @@ import { LobbyActions } from "../enums/systems/LobbyActions";
 import { PlayerManager } from "../systems/lobby/manager/PlayerManager";
 import { LobbyManager } from "../systems/lobby/manager/LobbyManager";
 
+import { IMission } from "../interfaces/IMission";
+import { MissionHandler } from "../handler/missionHandler";
+
 alt.onClient(
    "consoleCommand::command",
    (player: alt.Player, args: string[]) => {
@@ -72,6 +75,7 @@ alt.onClient(
          case CommandList.Lobby:
             let _PlayerManager = PlayerManager.getInstance(player);
             let _LobbyManager = LobbyManager.getInstance(player);
+            let _MissionHandler = MissionHandler.getInstance();
 
             let action = args[1];
             if (!action)
@@ -114,6 +118,15 @@ alt.onClient(
 
                   consoleMessage(player, "Attempt to stop Lobby");
 
+                  break;
+               case LobbyActions.Debug:
+                  // missionHandler.forEach((item: IMission) => {
+                  //    console.log(item.missionName);
+                  // });
+                  console.log("Resolt at index 0");
+                  _MissionHandler.result(0, (item: IMission) => {
+                     console.log(item.missionName);
+                  });
                   break;
             }
             break;
