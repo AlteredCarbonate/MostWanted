@@ -35,14 +35,16 @@ export class GameManager {
             alt.emitClient(
                this._player,
                EventTypes.systemGameStart,
-               cooldown,
-               item
+               item,
+               cooldown
             );
          });
       } else {
          // Start without Cooldown
          log.stream("TEMP: Starting Game... (No Cooldown)", LogTypes.Lobby);
-         alt.emitClient(this._player, EventTypes.systemGameStart);
+         this._MissionHandler.result(0, (item: IMission) => {
+            alt.emitClient(this._player, EventTypes.systemGameStart, item);
+         });
       }
    }
 

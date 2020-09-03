@@ -15,7 +15,7 @@ alt.onServer(EventTypes.systemLobbyPrepare, () => {
    alt.log(`system:lobby::prepare`);
 });
 
-alt.onServer(EventTypes.systemGameStart, (cooldown: number, item: IMission) => {
+alt.onServer(EventTypes.systemGameStart, (item: IMission, cooldown: number) => {
    alt.log(`system:game::start Cooldown: ${cooldown}`);
    alt.log(`Mission Parameter: ${item.missionName}`);
 });

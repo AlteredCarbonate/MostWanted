@@ -5,13 +5,9 @@ import { PlayerManager } from "./manager/PlayerManager";
 // import { TimerManager } from "./manager/TimerManager";
 
 let _PlayerManager: PlayerManager;
-let _index: number = 0;
 
 alt.on("system:lobby::init", (player: alt.Player) => {
-   _index += 1;
-   console.log(`Player Index: ${_index}`);
    player.setMeta("player:lobby::data", {
-      index: _index,
       status: LobbyStatus.Init,
    });
    _PlayerManager = PlayerManager.getInstance(player);

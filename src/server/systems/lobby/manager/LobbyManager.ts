@@ -9,12 +9,15 @@ import { TimerManager } from "./TimerManager";
 import { PlayerManager } from "./PlayerManager";
 import { GameManager } from "./GameManager";
 import { EventTypes } from "../../../enums/systems/EventTypes";
+import { MissionHandler } from "../../../handler/missionHandler";
+import { IMission } from "../../../interfaces/IMission";
 
 export class LobbyManager {
    static _instance: LobbyManager;
    _TimerManager: TimerManager;
    _PlayerManager: PlayerManager;
    _GameManager: GameManager;
+   _MissionHandler: MissionHandler;
 
    _readyPlayers: number;
    _player: alt.Player;
@@ -26,6 +29,7 @@ export class LobbyManager {
       this._TimerManager = TimerManager.getInstance(player);
       this._PlayerManager = PlayerManager.getInstance(player);
       this._GameManager = GameManager.getInstance(player);
+      this._MissionHandler = MissionHandler.getInstance();
    }
 
    /**
@@ -48,12 +52,35 @@ export class LobbyManager {
          });
 
          this._readyPlayers += 1;
-         alt.emitClient(this._player, EventTypes.systemLobbyPrepare);
+         this._PlayerManager.applyRole();
+
+         this._MissionHandler.result(0, (item: IMission) => {
+            alt.emitClient(this._player, EventTypes.systemLobbyPrepare, item);
+            if (
+               this._PlayerManager.getMeta().role === "Racer" ||
+               !this._PlayerManager.racerChoosen
+            ) {
+               log.stream(
+                  `${this._player.name} starting as Racer.`,
+                  LogTypes.Lobby
+               );
+               this._player.pos = new alt.Vector3(
+                  item.racerStart.x,
+                  item.racerStart.y,
+                  item.racerStart.z
+               );
+            } else {
+               this._player.pos = new alt.Vector3(
+                  item.policeStart.x,
+                  item.policeStart.y,
+                  item.policeStart.z
+               );
+            }
+         });
       }
    }
    /**
     * Emits Lobby Start
-    * @returns void
     */
    public start(): void {
       console.log(`readyPlayers: ${this._readyPlayers}`);
@@ -88,18 +115,9 @@ export class LobbyManager {
             }
          }
       });
-      // for (let playerAll of alt.Player.all) {
-      //    if (
-      //       playerAll.getMeta("player:lobby::data").status ===
-      //       LobbyStatus.Prepared
-      //    ) {
-      //    }
-      // }
-      // return log.stream("Unable to start Lobby", LogTypes.Lobby);
    }
    /**
     * Stops the Lobby
-    * @returns void
     */
    public stop(): void {
       this._TimerManager.stop(() => {
@@ -113,7 +131,6 @@ export class LobbyManager {
    }
    /**
     * Resets the Lobby
-    * @returns void
     */
    public restart(): void {
       this.reset();
@@ -125,7 +142,6 @@ export class LobbyManager {
    /**
     * Inits the Lobby
     * Sets Position, Vehicle and similar.
-    * @returns void
     */
    public init(type: TimerTypes): void {
       log.console("LobbyManager::INIT");
@@ -144,5 +160,6 @@ export class LobbyManager {
 
    private reset(): void {
       this._readyPlayers = 0;
+      this._PlayerManager.reset();
    }
 }

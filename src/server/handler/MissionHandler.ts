@@ -63,7 +63,7 @@ export class MissionHandler {
     * Gives one entry based on Index, retrieves callback
     * @param  {} index
     */
-   public result(index, cb) {
+   public result(index = 0, cb) {
       cb(localMission[index]);
    }
 }

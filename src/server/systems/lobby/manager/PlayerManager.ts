@@ -6,6 +6,8 @@ import { LogTypes } from "../../../enums/LogTypes";
 export class PlayerManager {
    static _instance: PlayerManager;
    _player: alt.Player;
+   Indexer: number;
+   racerChoosen: boolean = false;
 
    private constructor(player: alt.Player) {
       this._player = player;
@@ -23,25 +25,34 @@ export class PlayerManager {
     * @param  {alt.Player} player
     * @param  {any} value
     */
-   public setMeta(value: any): void {
-      this._player.setMeta("player:lobby::data", value);
+   public setMeta(value: any, invokePlayer?): void {
+      if (!invokePlayer) {
+         this._player.setMeta("player:lobby::data", value);
+      } else {
+         invokePlayer.setMeta("player:lobby::data", value);
+      }
    }
    /**
     * Retrieving Lobby Data for the Player
     * @param  {alt.Player} player
     */
-   public getMeta(): any {
-      return this._player.getMeta("player:lobby::data");
+   public getMeta(invokePlayer?): any {
+      if (!invokePlayer) {
+         return this._player.getMeta("player:lobby::data");
+      } else {
+         return invokePlayer.getMeta("player:lobby::data");
+      }
    }
 
    /**
     * Adds Player to the Lobby
     */
    public join(): void {
+      this.Indexer += 1;
       if (!this._player.valid) return console.log("Invalid Player tried join.");
 
       if (this.getMeta().status === LobbyStatus.Init) {
-         this.setMeta({ status: LobbyStatus.Joining });
+         this.setMeta({ index: this.Indexer, status: LobbyStatus.Joining });
          log.stream(`${this._player.name} joined the Lobby.`, LogTypes.Lobby);
       } else {
          log.stream(
@@ -66,6 +77,21 @@ export class PlayerManager {
    }
 
    /**
+    * Applies Role to player | Racer; Police
+    */
+   public applyRole(): void {
+      const player =
+         alt.Player.all[Math.floor(Math.random() * alt.Player.all.length)];
+
+      if (!this.racerChoosen) {
+         this.setMeta({ role: "Racer" }, player);
+         this.racerChoosen = true;
+      } else {
+         this.setMeta({ role: "Police" }, player);
+      }
+   }
+
+   /**
     * Removes Player from the Lobby
     */
    public leave(): void {
@@ -77,5 +103,10 @@ export class PlayerManager {
 
          log.stream(`${this._player.name} left the Lobby.`, LogTypes.Lobby);
       }
+   }
+
+   public reset() {
+      this.Indexer = 0;
+      this.racerChoosen = false;
    }
 }
