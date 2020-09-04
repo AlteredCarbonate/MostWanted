@@ -13,23 +13,23 @@ export const missions: Array<IMission> = [
          rz: 60,
          fov: 60,
       },
-      // Done
       racerStart: {
-         x: 487.4769,
-         y: -444.3429,
-         z: 29.0776,
+         x: 521.472,
+         y: -397.6088,
+         z: 31.5377,
+         rot: 2.4737,
       },
-      // Done
       racerEnd: {
-         x: 379.0154,
-         y: -607.0813,
-         z: 28.2689,
+         x: 375.9561,
+         y: -610.444,
+         z: 28.5385,
+         rot: 2.5726,
       },
-      // Done
       policeStart: {
-         x: 375.0725,
-         y: -849.2308,
-         z: 28.6901,
+         x: 422.2549,
+         y: -849.8373,
+         z: 29.0439,
+         rot: 1.5337,
       },
    },
    {
@@ -48,17 +48,20 @@ export const missions: Array<IMission> = [
          x: 1200.12,
          y: 500.12,
          z: 45.11,
+         rot: 50,
       },
       // Done
       racerEnd: {
          x: 487.4769,
          y: -444.3429,
          z: 29.0776,
+         rot: 50,
       },
       policeStart: {
          x: 1200.12,
          y: 500.12,
          z: 45.11,
+         rot: 50,
       },
    },
 ];
