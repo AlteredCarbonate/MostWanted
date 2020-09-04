@@ -14,15 +14,18 @@ export interface IMission {
       x: number;
       y: number;
       z: number;
+      rot: number;
    };
    racerEnd: {
       x: number;
       y: number;
       z: number;
+      rot: number;
    };
    policeStart: {
       x: number;
       y: number;
       z: number;
+      rot: number;
    };
 }

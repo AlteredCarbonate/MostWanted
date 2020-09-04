@@ -4,7 +4,6 @@ import * as log from "../../../configuration/log";
 import { LogTypes } from "../../../enums/LogTypes";
 import { EventTypes } from "../../../enums/systems/EventTypes";
 import { MissionHandler } from "../../../handler/missionHandler";
-import { IMission } from "../../../interfaces/IMission";
 
 export class GameManager {
    static _instance: GameManager;
@@ -27,24 +26,21 @@ export class GameManager {
 
       if (cooldown) {
          // Display Timer & then Start
-         log.stream(
-            `TEMP: Starting Game... (Cooldown ${cooldown})`,
-            LogTypes.Lobby
+         log.stream(`Starting Game... (Cooldown ${cooldown})`, LogTypes.Lobby);
+
+         const item = this._MissionHandler.result(0);
+         alt.emitClient(
+            this._player,
+            EventTypes.systemGameStart,
+            item,
+            cooldown
          );
-         this._MissionHandler.result(0, (item: IMission) => {
-            alt.emitClient(
-               this._player,
-               EventTypes.systemGameStart,
-               item,
-               cooldown
-            );
-         });
       } else {
          // Start without Cooldown
-         log.stream("TEMP: Starting Game... (No Cooldown)", LogTypes.Lobby);
-         this._MissionHandler.result(0, (item: IMission) => {
-            alt.emitClient(this._player, EventTypes.systemGameStart, item);
-         });
+         log.stream(" Starting Game... (No Cooldown)", LogTypes.Lobby);
+
+         const item = this._MissionHandler.result(0);
+         alt.emitClient(this._player, EventTypes.systemGameStart, item);
       }
    }
 

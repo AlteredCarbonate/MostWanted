@@ -25,50 +25,50 @@ export class TimerManager {
    /**
     * Start the timer (Countdown)
     */
-   public start(type: TimerTypes = TimerTypes.Prep, cb?) {
-      let diff, countDown;
-      this._type = type;
+   public start(type: TimerTypes = TimerTypes.Prep): Promise<any> {
+      return new Promise((res, rej) => {
+         let diff, countDown;
+         this._type = type;
 
-      log.stream(`Timer started (${type})`, LogTypes.Lobby);
-
-      if (this._isStarted) {
-         log.stream("Timer already running", LogTypes.Lobby);
-      }
-
-      if (type === TimerTypes.Prep) {
-         diff = moment().add(Config.defaultTimer, "ms");
-      }
-      if (type === TimerTypes.Unprep) {
-         diff = moment().add(Config.unprepTimer, "ms");
-      }
-
-      this._isStarted = true;
-      this._timerInter = alt.setInterval(() => {
-         countDown = Math.floor(moment().diff(diff) / 1000);
-         if (countDown < 0) {
-            // Outputting Timer
-            console.log(countDown);
-            return;
+         if (this._isStarted) {
+            log.stream("Timer already running", LogTypes.Lobby);
+            res("Timer already running");
          } else {
-            log.stream(`Timer finished (${type})`, LogTypes.Lobby);
-            // Callback
-            cb(type);
-            this.reset();
+            log.stream(`Timer started (${type})`, LogTypes.Lobby);
+            if (type === TimerTypes.Prep) {
+               diff = moment().add(Config.defaultTimer, "ms");
+            }
+            if (type === TimerTypes.Unprep) {
+               diff = moment().add(Config.unprepTimer, "ms");
+            }
+
+            this._isStarted = true;
+            this._timerInter = alt.setInterval(() => {
+               countDown = Math.floor(moment().diff(diff) / 1000);
+               if (countDown < 0) {
+                  // Outputting Timer
+                  console.log(countDown);
+                  return;
+               } else {
+                  log.stream(`Timer finished (${type})`, LogTypes.Lobby);
+                  this.reset();
+
+                  res(["Timer Finished", type]);
+               }
+            }, 1000);
          }
-      }, 1000);
+      });
    }
    /**
     * Stops the started Timer
     */
-   public stop(cb) {
+   public stop() {
       if (!this._isStarted) {
          log.stream("Can't stop unstarted Timer.", LogTypes.Lobby);
       }
 
       log.stream(`Timer stopped (${this._type})`, LogTypes.Lobby);
       this.reset();
-
-      cb();
    }
    /**
     * Restarts Timer, starts a new one with invoke

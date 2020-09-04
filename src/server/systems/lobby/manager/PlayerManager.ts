@@ -88,7 +88,7 @@ export class PlayerManager {
          this.setMeta({ role: "Racer" }, rndplayer);
          this.racerChoosen = true;
       } else {
-         const allPolice = allPlayers.filter((ele) => ele.id != rndplayer.id);
+         const allPolice = allPlayers.filter((e) => e.id != rndplayer.id);
 
          allPolice.forEach((e) => {
             this.setMeta({ role: "Police" }, e);
