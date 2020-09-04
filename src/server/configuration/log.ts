@@ -1,8 +1,15 @@
 import * as fs from "fs";
 import * as alt from "alt-server";
 import * as moment from "moment";
+import * as chalk from "chalk";
+
 import { LogTypes } from "../enums/LogTypes";
 import { ConsoleTypes } from "../enums/ConsoleTypes";
+
+// Colors
+export const success = chalk.green;
+export const error = chalk.red;
+export const highlight = chalk.cyan;
 
 export function console(message: any) {
    alt.log(message);

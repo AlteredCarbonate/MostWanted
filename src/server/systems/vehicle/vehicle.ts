@@ -22,7 +22,7 @@ export function spawn(
          );
 
          if (vehicle) {
-            player.setMeta("vehicle::data", {
+            player.setMeta("player::data", {
                hasVehicle: true,
             });
             if (tpPlayer) {
@@ -63,11 +63,9 @@ export function remove(player: alt.Player): Promise<any> {
       try {
          vehicles.forEach((e) => {
             if (!e.valid) return;
-
             let owner = e.getSyncedMeta("vehicle::data").owner;
-
-            if (owner === player.name) {
-               e.destroy;
+            if (owner == player.name) {
+               e.destroy();
             }
          });
          res("All valid cars destroyed.");
