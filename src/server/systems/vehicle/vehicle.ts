@@ -3,12 +3,12 @@ import { Config } from "../../configuration/config";
 import * as log from "../../configuration/log";
 import { LogTypes } from "../../enums/LogTypes";
 
-export function spawn(
+export async function spawn(
    player: alt.Player,
    vehName: string,
    tpPlayer: boolean = false
 ): Promise<any> {
-   return new Promise(async (res, rej) => {
+   return new Promise((res, rej) => {
       let vehicle: alt.Vehicle;
       try {
          vehicle = new alt.Vehicle(
@@ -16,8 +16,8 @@ export function spawn(
             player.pos.x,
             player.pos.y,
             player.pos.z,
-            player.rot.x,
-            player.rot.y,
+            0,
+            0,
             player.rot.z
          );
 
@@ -56,7 +56,7 @@ export function spawn(
    });
 }
 
-export function remove(player: alt.Player): Promise<any> {
+export async function remove(player: alt.Player): Promise<any> {
    return new Promise((res, rej) => {
       let vehicles: Array<alt.Vehicle> = alt.Vehicle.all;
 
