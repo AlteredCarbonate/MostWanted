@@ -1,5 +1,8 @@
+import * as log from "../configuration/log";
+
 import { missions } from "../configuration/missions";
 import { IMission } from "../interfaces/IMission";
+import { LogTypes } from "../enums/LogTypes";
 
 let localMission: Array<IMission> = [...missions];
 let length = localMission.length - 1;
@@ -29,7 +32,6 @@ export class MissionHandler {
     */
    public remove(pos: removePos = removePos.start, index = 0) {
       if (length === -1) return console.log("Can't remove Entry");
-      console.log("REMOVE");
       localMission.forEach((item) => {
          console.log(item.missionName);
       });
@@ -45,25 +47,35 @@ export class MissionHandler {
             break;
       }
    }
-   /**
-    * Resets the Array to the Default
-    */
-   public reset() {
-      localMission = [...missions];
-   }
+
    /**
     * forEach inside the Array, retrieves callback
     */
-   public forEach(cb) {
-      localMission.forEach((item) => {
-         cb(item);
+   public forEach(): Promise<any> {
+      return new Promise((res, rej) => {
+         try {
+            localMission.forEach((item) => {
+               res(item);
+            });
+         } catch (error) {
+            log.stream("MissionHandler forEach => " + error, LogTypes.Server);
+
+            rej(error);
+         }
       });
    }
    /**
     * Gives one entry based on Index, retrieves callback
     * @param  {} index
     */
-   public result(index = 0, cb) {
-      cb(localMission[index]);
+   public result(index = 0) {
+      return localMission[index];
+   }
+
+   /**
+    * Resets the Array to the Default
+    */
+   public reset() {
+      localMission = [...missions];
    }
 }
