@@ -2,14 +2,25 @@ import * as fs from "fs";
 import * as alt from "alt-server";
 import * as moment from "moment";
 import { LogTypes } from "../enums/LogTypes";
+import { ConsoleTypes } from "../enums/ConsoleTypes";
 
 export function console(message: any) {
    alt.log(message);
 }
+
+/**
+ * Send a Player a specific consoleMessage
+ */
+export function consoleMessage(
+   player: alt.Player,
+   message: any,
+   type: ConsoleTypes = ConsoleTypes.Default
+) {
+   alt.emitClient(player, "consoleCommand::message", message, type);
+}
+
 /**
  * Log with categories into a .log
- * @param  {any} message Define the set message
- * @param  {LogTypes=LogTypes.Undefined} type Default Undefined | Types Undefined; Server; Player;
  */
 export function stream(message: any, type: LogTypes = LogTypes.Undefined) {
    const date = moment().format("YYYY/MM/DD hh:mm:ss a");

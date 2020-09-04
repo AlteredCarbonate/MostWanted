@@ -1,8 +1,8 @@
 import * as alt from "alt-server";
 import * as log from "../configuration/log";
+import * as vehicle from "../systems/vehicle/vehicle";
 
 import { ConsoleTypes } from "../enums/ConsoleTypes";
-import { Config } from "../configuration/config";
 import { LogTypes } from "../enums/LogTypes";
 import { CommandList } from "../enums/CommandList";
 import { LobbyActions } from "../enums/systems/LobbyActions";
@@ -12,158 +12,122 @@ import { LobbyManager } from "../systems/lobby/manager/LobbyManager";
 import { IMission } from "../interfaces/IMission";
 import { MissionHandler } from "../handler/missionHandler";
 
-alt.onClient(
-   "consoleCommand::command",
-   (player: alt.Player, args: string[]) => {
-      if (!args) return;
-      let prefix = args[0];
+alt.onClient("consoleCommand::command", (player: alt.Player, args: any[]) => {
+   if (!args) return;
+   let prefix = args[0];
 
-      switch (prefix) {
-         case CommandList.Vehicle:
-            const [, vehName, tpPlayer] = args;
-            let veh: any;
+   switch (prefix) {
+      case CommandList.Vehicle:
+         const [, vehName, tpPlayer] = args;
 
-            if (!vehName)
-               return consoleMessage(
+         if (!vehName)
+            return log.consoleMessage(
+               player,
+               "Usage: veh <vehName:vehicle> <tpPlayer:bool>",
+               ConsoleTypes.Error
+            );
+         try {
+            vehicle.spawn(player, vehName, tpPlayer).then(() => {
+               log.stream(
+                  `${player.name} spawned an ${vehName.toUpperCase()}.`,
+                  LogTypes.Command
+               );
+               log.consoleMessage(
                   player,
-                  "Usage: veh <vehName:vehicle> <tpPlayer:bool>",
-                  ConsoleTypes.Error
+                  `Successfuly spawned a ${vehName.toUpperCase()}`,
+                  ConsoleTypes.Default
                );
-            try {
-               veh = new alt.Vehicle(
-                  vehName,
-                  player.pos.x,
-                  player.pos.y,
-                  player.pos.z,
-                  player.rot.x,
-                  player.rot.y,
-                  player.rot.z
-               );
-               if (veh) {
-                  veh.numberPlateText = Config.vehiclePlateName;
-                  log.stream(
-                     `${player.name} spawned an ${vehName.toUpperCase()}.`,
-                     LogTypes.Command
-                  );
-                  consoleMessage(
-                     player,
-                     `Successfuly spawned a ${vehName.toUpperCase()}`,
-                     ConsoleTypes.Default
-                  );
+            });
+         } catch (error) {
+            log.consoleMessage(
+               player,
+               "Failed to create vehicle, invalid model hash.",
+               ConsoleTypes.Error
+            );
+         }
+         break;
+      case CommandList.VehicleDelete:
+         vehicle.remove(player).then((res) => {
+            log.consoleMessage(player, res);
+         });
+         break;
+      case CommandList.Lobby:
+         let _PlayerManager = PlayerManager.getInstance(player);
+         let _LobbyManager = LobbyManager.getInstance(player);
+         let _MissionHandler = MissionHandler.getInstance();
 
-                  if (!tpPlayer) {
-                     veh.setSyncedMeta("vehicle::data", {
-                        owner: player.name,
-                        tpPlayer: false,
-                     });
-                  } else if (tpPlayer) {
-                     veh.setSyncedMeta("vehicle::data", {
-                        owner: player.name,
-                        tpPlayer: true,
-                     });
-                  }
+         let action = args[1];
+         if (!action)
+            return log.consoleMessage(
+               player,
+               "Usage: lobby <action:actionTypes>",
+               ConsoleTypes.Error
+            );
+         switch (action) {
+            case LobbyActions.Join:
+               _PlayerManager.join();
+
+               // Error Prevention
+               if (player.name == "Bonus") {
+                  player.kick(); // <3
                }
-            } catch (error) {
-               consoleMessage(
-                  player,
-                  "Failed to create vehicle, invalid model hash.",
-                  ConsoleTypes.Error
-               );
-            }
-            break;
 
-         case CommandList.Lobby:
-            let _PlayerManager = PlayerManager.getInstance(player);
-            let _LobbyManager = LobbyManager.getInstance(player);
-            let _MissionHandler = MissionHandler.getInstance();
+               log.consoleMessage(player, `Attempt to join the Lobby`);
+               break;
+            case LobbyActions.Ready:
+               _PlayerManager.ready();
 
-            let action = args[1];
-            if (!action)
-               return consoleMessage(
-                  player,
-                  "Usage: lobby <action:actionTypes>",
-                  ConsoleTypes.Error
-               );
-            switch (action) {
-               case LobbyActions.Join:
-                  _PlayerManager.join();
+               log.consoleMessage(player, `Attempt to change Status to Ready`);
+               break;
+            case LobbyActions.Leave:
+               _PlayerManager.leave();
 
-                  // Error Prevention
-                  if (player.name == "Bonus") {
-                     player.kick(); // <3
-                  }
+               log.consoleMessage(player, `Attempt to leave the Lobby`);
+               break;
+            case LobbyActions.Start:
+               _LobbyManager.start();
 
-                  consoleMessage(player, `Attempt to join the Lobby`);
-                  break;
-               case LobbyActions.Ready:
-                  _PlayerManager.ready();
+               log.consoleMessage(player, "Attempt to start Lobby");
+               break;
+            case LobbyActions.Prepare:
+               _LobbyManager.prepare();
+               break;
+            case LobbyActions.Stop:
+               _LobbyManager.stop();
 
-                  consoleMessage(player, `Attempt to change Status to Ready`);
-                  break;
-               case LobbyActions.Leave:
-                  _PlayerManager.leave();
+               log.consoleMessage(player, "Attempt to stop Lobby");
 
-                  consoleMessage(player, `Attempt to leave the Lobby`);
-                  break;
-               case LobbyActions.Start:
-                  _LobbyManager.start();
+               break;
+            case LobbyActions.Debug:
+               // missionHandler.forEach((item: IMission) => {
+               //    console.log(item.missionName);
+               // });
+               console.log("Resolt at index 0");
+               _MissionHandler.result(0, (item: IMission) => {
+                  console.log(item.missionName);
+               });
+               break;
+         }
+         break;
 
-                  consoleMessage(player, "Attempt to start Lobby");
-                  break;
-               case LobbyActions.Prepare:
-                  _LobbyManager.prepare();
-                  break;
-               case LobbyActions.Stop:
-                  _LobbyManager.stop();
+      case CommandList.Position:
+         let usage = args[1];
+         if (!usage) {
+            log.consoleMessage(
+               player,
+               `[X]: ${player.pos.x.toFixed(4)} [Y]: ${player.pos.y.toFixed(
+                  4
+               )} [Z]: ${player.pos.z.toFixed(4)}`
+            );
+         } else {
+            log.consoleMessage(
+               player,
+               `[X]: ${player.pos.x.toFixed(4)} [Y]: ${player.pos.y.toFixed(
+                  4
+               )} [Z]: ${player.pos.z.toFixed(4)} => (${usage})`
+            );
+         }
 
-                  consoleMessage(player, "Attempt to stop Lobby");
-
-                  break;
-               case LobbyActions.Debug:
-                  // missionHandler.forEach((item: IMission) => {
-                  //    console.log(item.missionName);
-                  // });
-                  console.log("Resolt at index 0");
-                  _MissionHandler.result(0, (item: IMission) => {
-                     console.log(item.missionName);
-                  });
-                  break;
-            }
-            break;
-
-         case CommandList.Position:
-            let usage = args[1];
-            if (!usage) {
-               consoleMessage(
-                  player,
-                  `[X]: ${player.pos.x.toFixed(4)} [Y]: ${player.pos.y.toFixed(
-                     4
-                  )} [Z]: ${player.pos.z.toFixed(4)}`
-               );
-            } else {
-               consoleMessage(
-                  player,
-                  `[X]: ${player.pos.x.toFixed(4)} [Y]: ${player.pos.y.toFixed(
-                     4
-                  )} [Z]: ${player.pos.z.toFixed(4)} => (${usage})`
-               );
-            }
-
-            break;
-      }
+         break;
    }
-);
-
-/**
- * Send a Player a specific consoleMessage
- * @param  {alt.Player} player Player
- * @param  {any} message Message to be send
- * @param  {ConsoleTypes} type? Default Default | Types Default; Warning; Error;
- */
-export function consoleMessage(
-   player: alt.Player,
-   message: any,
-   type: ConsoleTypes = ConsoleTypes.Default
-) {
-   alt.emitClient(player, "consoleCommand::message", message, type);
-}
+});

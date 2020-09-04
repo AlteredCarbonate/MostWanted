@@ -80,14 +80,19 @@ export class PlayerManager {
     * Applies Role to player | Racer; Police
     */
    public applyRole(): void {
-      const player =
+      const rndplayer =
          alt.Player.all[Math.floor(Math.random() * alt.Player.all.length)];
+      const allPlayers = [...alt.Player.all];
 
       if (!this.racerChoosen) {
-         this.setMeta({ role: "Racer" }, player);
+         this.setMeta({ role: "Racer" }, rndplayer);
          this.racerChoosen = true;
       } else {
-         this.setMeta({ role: "Police" }, player);
+         const allPolice = allPlayers.filter((ele) => ele.id != rndplayer.id);
+
+         allPolice.forEach((e) => {
+            this.setMeta({ role: "Police" }, e);
+         });
       }
    }
 
