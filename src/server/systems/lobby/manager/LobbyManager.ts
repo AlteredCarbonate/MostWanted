@@ -23,22 +23,28 @@ export class LobbyManager {
 
    _readyPlayers: number;
    _player: alt.Player;
+   racerChoosen: boolean = false;
 
    private constructor(player: alt.Player) {
       this._player = player;
       this._readyPlayers = 0;
 
+      this._PlayerManager = new PlayerManager(player);
+      this._PlayerHandler = new PlayerHandler(player);
+      this._MissionHandler = new MissionHandler();
+
       this._TimerManager = TimerManager.getInstance(player);
-      this._PlayerManager = PlayerManager.getInstance(player);
       this._GameManager = GameManager.getInstance(player);
-      this._MissionHandler = MissionHandler.getInstance();
-      this._PlayerHandler = PlayerHandler.getInstance(player);
    }
 
-   public static getInstance(player: alt.Player): LobbyManager {
-      return this._instance || (this._instance = new this(player));
+   static getInstance(player: alt.Player): LobbyManager {
+      if (!this._instance) {
+         this._instance = new this(player);
+      } else {
+         return this._instance;
+      }
+      return this._instance;
    }
-
    /**
     * Emits Lobby Start
     */

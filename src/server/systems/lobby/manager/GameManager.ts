@@ -12,7 +12,7 @@ export class GameManager {
 
    private constructor(player: alt.Player) {
       this._player = player;
-      this._MissionHandler = MissionHandler.getInstance();
+      this._MissionHandler = new MissionHandler();
    }
 
    public static getInstance(player: alt.Player): GameManager {

@@ -4,20 +4,12 @@ import { LobbyStatus } from "../../../enums/systems/LobbyStatus";
 import { LogTypes } from "../../../enums/LogTypes";
 
 export class PlayerManager {
-   static _instance: PlayerManager;
    _player: alt.Player;
    Indexer: number;
    racerChoosen: boolean = false;
 
-   private constructor(player: alt.Player) {
+   constructor(player: alt.Player) {
       this._player = player;
-   }
-
-   /**
-    * Gets the current Instance of the Manager
-    */
-   public static getInstance(player: alt.Player): PlayerManager {
-      return this._instance || (this._instance = new this(player));
    }
 
    /**
@@ -83,7 +75,6 @@ export class PlayerManager {
       const rndplayer =
          alt.Player.all[Math.floor(Math.random() * alt.Player.all.length)];
       const allPlayers = [...alt.Player.all];
-
       if (!this.racerChoosen) {
          this.setMeta({ role: "Racer" }, rndplayer);
          this.racerChoosen = true;

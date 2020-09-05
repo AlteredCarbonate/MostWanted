@@ -3,32 +3,25 @@ import * as log from "../configuration/log";
 import * as util from "../util";
 import * as vehicle from "../systems/vehicle/vehicle";
 
-import { LogTypes } from "../enums/LogTypes";
 import { PlayerManager } from "../systems/lobby/manager/PlayerManager";
+
+import { LogTypes } from "../enums/LogTypes";
 import { IMission } from "../interfaces/IMission";
 import { policePool } from "../pool/policePool";
 import { racerPool } from "../pool/racerPool";
 
 export class PlayerHandler {
-   static _instance: PlayerHandler;
    _PlayerManager: PlayerManager;
    _player: alt.Player;
 
-   private constructor(player: alt.Player) {
+   constructor(player: alt.Player) {
       this._player = player;
-      this._PlayerManager = PlayerManager.getInstance(player);
-   }
-
-   public static getInstance(player: alt.Player): PlayerHandler {
-      return this._instance || (this._instance = new this(player));
+      this._PlayerManager = new PlayerManager(player);
    }
 
    public init(item: IMission) {
       return new Promise(async (res) => {
-         if (
-            this._PlayerManager.getMeta().role === "Racer" ||
-            !this._PlayerManager.racerChoosen
-         ) {
+         if (this._PlayerManager.getMeta().role === "Racer") {
             // Racer
             let modelName = await this.vehicle();
 

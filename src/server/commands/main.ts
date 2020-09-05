@@ -53,9 +53,9 @@ alt.onClient(
             });
             break;
          case CommandList.Lobby:
-            let _PlayerManager = PlayerManager.getInstance(player);
+            let _PlayerManager = new PlayerManager(player);
+            let _MissionHandler = new MissionHandler();
             let _LobbyManager = LobbyManager.getInstance(player);
-            let _MissionHandler = MissionHandler.getInstance();
 
             let action = args[1];
             if (!action)

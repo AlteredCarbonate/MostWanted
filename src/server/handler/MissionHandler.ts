@@ -14,16 +14,7 @@ export enum removePos {
 }
 
 export class MissionHandler {
-   static _instance: MissionHandler;
-
-   private constructor() {}
-
-   /**
-    * Gets the current Instance of the Manager
-    */
-   public static getInstance(): MissionHandler {
-      return this._instance || (this._instance = new this());
-   }
+   constructor() {}
 
    /**
     * Removes one Entry
