@@ -29,11 +29,13 @@ export async function spawn(
                vehicle.setSyncedMeta("vehicle::data", {
                   owner: player.name,
                   tpPlayer: true,
+                  timestamp: Date.now(),
                });
             } else {
                vehicle.setSyncedMeta("vehicle::data", {
                   owner: player.name,
                   tpPlayer: false,
+                  timestamp: Date.now(),
                });
             }
 

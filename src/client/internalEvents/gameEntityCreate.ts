@@ -1,7 +1,5 @@
 import * as alt from "alt-client";
-import * as native from "natives";
-
-const localPlayer = alt.Player.local;
+import { setIntoVehicle } from "../systems/vehicle/vehicle";
 
 alt.on("gameEntityCreate", (entity: alt.Entity) => {
    if (entity instanceof alt.Vehicle) {
@@ -9,9 +7,7 @@ alt.on("gameEntityCreate", (entity: alt.Entity) => {
       let data = entity.getSyncedMeta("vehicle::data");
 
       if (data.tpPlayer) {
-         if (data.owner === localPlayer.name) {
-            native.setPedIntoVehicle(localPlayer.scriptID, entity.scriptID, -1);
-         }
+         setIntoVehicle(entity);
       }
    }
 });
