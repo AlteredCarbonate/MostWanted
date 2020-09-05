@@ -20,14 +20,3 @@ mongoose.connection.on("error", (err) => {
       chalk.redBright("[DATABASE] Connection Failure!\n" + err.message)
    );
 });
-
-// const kittySchema = new mongoose.Schema({
-//    name: String,
-// });
-
-// const fluffy = new Kitten({ name: "fluffy" });
-// fluffy.save((err, res) => {
-//    if (err) {
-//       chalk.redBright("[DATABASE] Saving Failure!\n" + err.message);
-//    }
-// });

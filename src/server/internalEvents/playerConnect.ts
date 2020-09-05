@@ -1,4 +1,6 @@
 import * as alt from "alt-server";
+import * as moment from "moment";
+
 import { LogTypes } from "../enums/LogTypes";
 import { Config } from "../configuration/config";
 import { log } from "../util";
@@ -33,12 +35,14 @@ function handshake(player: alt.Player) {
 }
 
 function savePlayer(player: alt.Player) {
+   let dateNow = moment().format();
    const data = new playerModel({
       userName: player.name,
       socialID: player.socialId,
       rank: 0,
-      accountCreation: Date.now(),
+      accountCreation: dateNow,
    });
+
    data.save();
 }
 
