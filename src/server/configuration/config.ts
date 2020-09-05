@@ -1,24 +1,17 @@
 export const Config = {
-   // Spawn Location / Camera Point
    defaultSpawnPoint: {
       x: 231.8901,
       y: -787.5165,
       z: 30.0212,
    },
-   //  Data
+   // VEHICLE
    vehiclePlateName: "MW",
-   // Timers
-   // - Player
-   timeRewardTime: 60000 * 5, // How much time before a reward point is added.
-   timePlayerSaveTime: 60000 * 2, // How many minutes before we save all player data.
-   // - Lobby
+   // LOBBY
    minPlayer: 0,
-   defaultTimer: 60000 * 0.25, // Default timer is 1 Minute
-   unprepTimer: 60000 * 1.5, // Unprepared timer is 1.5 Minutes
-   // - Vehicle
-   // vehicleSaveTime: 60000 * 5, // 5 Minutes
-   // Weather
-   weatherCycleTime: 60000 * 5, // 5 Minutes
+   defaultTimer: 60000 * 0.25,
+   unprepTimer: 60000 * 1.5,
+   // WEATHER
+   weatherCycleTime: 60000 * 5,
    weatherCycle: [
       0, // Extra sunny
       0, // Extra sunny

@@ -1,7 +1,7 @@
 export enum LogTypes {
-   Undefined,
-   Player,
-   Server,
-   Command,
-   Lobby,
+   General = "general",
+   Player = "player",
+   Server = "server",
+   Command = "command",
+   Lobby = "lobby",
 }

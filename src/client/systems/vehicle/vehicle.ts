@@ -1,6 +1,8 @@
 import * as alt from "alt-client";
 import * as native from "natives";
-
+/**
+ * Sets Player into Vehicle
+ */
 export function setIntoVehicle(vehicle: alt.Vehicle) {
    let data = vehicle.getSyncedMeta("vehicle::data");
 
@@ -11,7 +13,9 @@ export function setIntoVehicle(vehicle: alt.Vehicle) {
       native.setPedIntoVehicle(alt.Player.local.scriptID, vehicle.scriptID, -1);
    }
 }
-
+/**
+ * Repairs Vehicle
+ */
 export function repair(vehicle) {
    native.setVehicleFixed(vehicle.scriptID);
    native.setVehicleDeformationFixed(vehicle.scriptID);

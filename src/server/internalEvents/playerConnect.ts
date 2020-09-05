@@ -1,18 +1,22 @@
 import * as alt from "alt-server";
-import * as log from "../configuration/log";
 import { LogTypes } from "../enums/LogTypes";
 import { Config } from "../configuration/config";
+import { log } from "../util";
+
+let _log = new log();
 
 alt.on("playerConnect", (player: alt.Player) => {
-   log.stream(`${player.name} connected.`, LogTypes.Player);
+   _log.stream(`${player.name} connected.`, LogTypes.Player);
+
    handshake(player);
    alt.emitClient(player, "server:startHandshake");
 });
 
 function handshake(player: alt.Player) {
    alt.emit("system:lobby::init", player);
+
    alt.onClient("client:endHandshake", (player: alt.Player) => {
-      log.stream(
+      _log.stream(
          `${player.name} Handshake complete, answered successful.`,
          LogTypes.Player
       );

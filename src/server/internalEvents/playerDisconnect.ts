@@ -1,9 +1,8 @@
 import * as alt from "alt-server";
-import * as log from "../configuration/log";
 import { LogTypes } from "../enums/LogTypes";
-// import { PlayerManager } from "../systems/lobby/internal/manager";
+import { log } from "../util";
+let _log = new log();
 
 alt.on("playerDisconnect", (player: alt.Player) => {
-   log.stream(`${player} disconnected.`, LogTypes.Player);
-   // PlayerManager.leave(player);
+   _log.stream(`${player} disconnected.`, LogTypes.Player);
 });
