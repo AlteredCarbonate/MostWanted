@@ -39,7 +39,7 @@ export class log {
          if (type === LogTypes.General) {
             fs.appendFile(
                _dir,
-               `[${type.toUpperCase}]: [${this.date}]: ${message}`,
+               `[${type.toUpperCase}]: [${this.date}]: ${message}\n`,
                (err) => {
                   if (err) {
                      console.log(err);
@@ -49,7 +49,7 @@ export class log {
                }
             );
          } else {
-            fs.appendFile(_dir, `[${this.date}]: ${message}`, (err) => {
+            fs.appendFile(_dir, `[${this.date}]: ${message}\n`, (err) => {
                if (err) {
                   console.log(err);
                   rej(err);
