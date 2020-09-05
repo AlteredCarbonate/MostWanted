@@ -1,15 +1,11 @@
 import * as fs from "fs";
 import * as alt from "alt-server";
 import * as moment from "moment";
-import * as chalk from "chalk";
 
 import { LogTypes } from "../enums/LogTypes";
 import { ConsoleTypes } from "../enums/ConsoleTypes";
 
-// Colors
-export const success = chalk.green;
-export const error = chalk.red;
-export const highlight = chalk.cyan;
+const date = moment().format("YYYY/MM/DD hh:mm:ss a");
 
 export function console(message: any) {
    alt.log(message);
@@ -30,8 +26,6 @@ export function consoleMessage(
  * Log with categories into a .log
  */
 export function stream(message: any, type: LogTypes = LogTypes.Undefined) {
-   const date = moment().format("YYYY/MM/DD hh:mm:ss a");
-
    if (type == LogTypes.Undefined) {
       fs.appendFile(
          "logs/general.log",

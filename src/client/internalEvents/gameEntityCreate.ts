@@ -1,5 +1,5 @@
 import * as alt from "alt-client";
-import { setIntoVehicle } from "../systems/vehicle/vehicle";
+import * as vehicle from "../systems/vehicle/vehicle";
 
 alt.on("gameEntityCreate", (entity: alt.Entity) => {
    if (entity instanceof alt.Vehicle) {
@@ -7,7 +7,7 @@ alt.on("gameEntityCreate", (entity: alt.Entity) => {
       let data = entity.getSyncedMeta("vehicle::data");
 
       if (data.tpPlayer) {
-         setIntoVehicle(entity);
+         vehicle.setIntoVehicle(entity);
       }
    }
 });

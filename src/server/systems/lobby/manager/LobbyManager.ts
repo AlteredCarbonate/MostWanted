@@ -35,9 +35,6 @@ export class LobbyManager {
       this._PlayerHandler = PlayerHandler.getInstance(player);
    }
 
-   /**
-    * Gets the current Instance of the Manager
-    */
    public static getInstance(player: alt.Player): LobbyManager {
       return this._instance || (this._instance = new this(player));
    }
@@ -45,7 +42,7 @@ export class LobbyManager {
    /**
     * Emits Lobby Start
     */
-   public start(): void {
+   public async start(): Promise<void> {
       let isStartable = this.checkStageOne();
 
       console.log(`readyPlayers: ${this._readyPlayers}`);
@@ -61,26 +58,21 @@ export class LobbyManager {
             log.stream("Lobby is Startable", LogTypes.Lobby);
             if (!this._TimerManager._isStarted) {
                log.stream("Start Lobby (Prepared)", LogTypes.Lobby);
-               this._TimerManager.start(TimerTypes.Prep).then((res) => {
-                  let [message, type] = res;
-                  log.stream(`Lobby Starting...(${type})`, LogTypes.Lobby);
-                  log.console(`Callback: ${message}`);
 
-                  this.init(type);
-               });
+               let type = await this._TimerManager.start(TimerTypes.Prep);
+               log.stream(`Lobby Starting...(${type})`, LogTypes.Lobby);
+
+               this.init(type);
             }
          } else {
             log.stream("Lobby isn't Startable", LogTypes.Lobby);
             if (!this._TimerManager._isStarted) {
                log.stream("Start Lobby (Unprepared)", LogTypes.Lobby);
 
-               this._TimerManager.start(TimerTypes.Unprep).then((res) => {
-                  let [message, type] = res;
-                  log.stream(`Lobby Starting...(${type})`, LogTypes.Lobby);
-                  log.console(`Callback: ${message}`);
+               let type = await this._TimerManager.start(TimerTypes.Unprep);
+               log.stream(`Lobby Starting...(${type})`, LogTypes.Lobby);
 
-                  this.init(type);
-               });
+               this.init(type);
             }
          }
       }
@@ -108,12 +100,10 @@ export class LobbyManager {
     * Inits the Lobby
     * Sets Position, Vehicle and similar.
     */
+
    public init(type: TimerTypes): void {
       log.console("LobbyManager::INIT");
       alt.emitClient(this._player, EventTypes.systemLobbylocalTimer, type);
-
-      this.checkStageTwo();
-      this._GameManager.start(5);
    }
 
    private reset(): void {
@@ -123,32 +113,43 @@ export class LobbyManager {
       log.stream(`Lobby resetting`, LogTypes.Lobby);
    }
 
-   private checkStageOne() {
-      if (Config.minPlayer <= alt.Player.all.length) {
-         if (this._readyPlayers <= alt.Player.all.length) {
-            return true;
-         } else {
-            return false;
+   public checkStageOne() {
+      if (this._PlayerManager.getMeta().status === LobbyStatus.Ready) {
+         this._readyPlayers += 1;
+         if (Config.minPlayer <= alt.Player.all.length) {
+            if (this._readyPlayers <= alt.Player.all.length) {
+               return true;
+            } else {
+               return false;
+            }
          }
       }
       return undefined;
    }
 
-   private checkStageTwo() {
+   public checkStageTwo() {
       if (!this._player.valid) return;
       if (this._PlayerManager.getMeta().status === LobbyStatus.Ready) {
+         const item = this._MissionHandler.result(0);
          console.log("player ready");
 
          this._PlayerManager.setMeta({
             status: LobbyStatus.Prepared,
          });
-
-         this._readyPlayers += 1;
          this._PlayerManager.applyRole();
 
-         const item = this._MissionHandler.result(0);
          alt.emitClient(this._player, EventTypes.systemLobbyPrepare, item);
          this._PlayerHandler.init(item);
       }
    }
 }
+
+alt.on(EventTypes.systemLobbyStageing, (player: alt.Player) => {
+   log.console("LobbyManager systemLobbyStageing");
+
+   let _LobbyManager = LobbyManager.getInstance(player);
+   let _GameManager = GameManager.getInstance(player);
+
+   _LobbyManager.checkStageTwo();
+   _GameManager.start(5);
+});

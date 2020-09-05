@@ -4,6 +4,7 @@ import { TimerTypes } from "../../../enums/systems/TimerTypes";
 import * as log from "../../../configuration/log";
 import { LogTypes } from "../../../enums/LogTypes";
 import { Config } from "../../../configuration/config";
+import { EventTypes } from "../../../enums/systems/EventTypes";
 
 export class TimerManager {
    static _instance: TimerManager;
@@ -44,16 +45,18 @@ export class TimerManager {
 
             this._isStarted = true;
             this._timerInter = alt.setInterval(() => {
-               countDown = Math.floor(moment().diff(diff) / 1000);
-               if (countDown < 0) {
+               countDown = Math.abs(Math.floor(moment().diff(diff) / 1000));
+               if (countDown > 0) {
                   // Outputting Timer
                   console.log(countDown);
-                  return;
+                  if (countDown == 5) {
+                     this.emitStageing();
+                  }
                } else {
                   log.stream(`Timer finished (${type})`, LogTypes.Lobby);
                   this.reset();
 
-                  res(["Timer Finished", type]);
+                  res(type);
                }
             }, 1000);
          }
@@ -81,5 +84,11 @@ export class TimerManager {
    private reset(): void {
       this._isStarted = false;
       alt.clearInterval(this._timerInter);
+   }
+
+   private emitStageing() {
+      log.stream("Reached 5 Seconds - Stageing Lobby", LogTypes.Lobby);
+      alt.emit(EventTypes.systemLobbyStageing, this._player);
+      alt.emitClient(this._player, EventTypes.systemLobbyStageing);
    }
 }
