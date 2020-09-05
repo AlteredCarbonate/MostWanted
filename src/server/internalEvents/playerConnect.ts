@@ -2,6 +2,7 @@ import * as alt from "alt-server";
 import { LogTypes } from "../enums/LogTypes";
 import { Config } from "../configuration/config";
 import { log } from "../util";
+import { playerModel } from "../database/models";
 
 let _log = new log();
 
@@ -9,6 +10,7 @@ alt.on("playerConnect", (player: alt.Player) => {
    _log.stream(`${player.name} connected.`, LogTypes.Player);
 
    handshake(player);
+   savePlayer(player);
    alt.emitClient(player, "server:startHandshake");
 });
 
@@ -28,6 +30,16 @@ function handshake(player: alt.Player) {
       player.model = "g_f_importexport_01";
       player.health = 200;
    });
+}
+
+function savePlayer(player: alt.Player) {
+   const data = new playerModel({
+      userName: player.name,
+      socialID: player.socialId,
+      rank: 0,
+      accountCreation: Date.now(),
+   });
+   data.save();
 }
 
 // alt.on(

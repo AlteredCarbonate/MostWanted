@@ -1,3 +1,5 @@
+export const dbURL = "mongodb://localhost:27017/altV";
+
 export const Config = {
    defaultSpawnPoint: {
       x: 231.8901,
