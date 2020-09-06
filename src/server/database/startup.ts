@@ -9,6 +9,7 @@ console.log(chalk.greenBright("[DATABASE] Startup"));
 mongoose.connect(dbURL, {
    useNewUrlParser: true,
    useUnifiedTopology: true,
+   serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
 });
 
 mongoose.connection.on("connected", () => {
@@ -17,6 +18,8 @@ mongoose.connection.on("connected", () => {
 
 mongoose.connection.on("error", (err) => {
    console.log(
-      chalk.redBright("[DATABASE] Connection Failure!\n" + err.message)
+      chalk.redBright(
+         "[DATABASE] Connection Timeout after 5 Seconds!\n" + err.message
+      )
    );
 });
