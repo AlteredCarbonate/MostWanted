@@ -1,8 +1,9 @@
 import * as mongoose from "mongoose";
+import * as moment from "moment";
 
 export const playerSchema = new mongoose.Schema({
-   userName: String,
+   userName: { type: String, required: true },
    socialID: Number,
    rank: Number,
-   accountCreation: Date,
+   createdAt: { type: Date, default: moment().format() },
 });

@@ -4,5 +4,8 @@ import { log } from "../util";
 let _log = new log();
 
 alt.on("playerDisconnect", (player: alt.Player) => {
-   _log.stream(`${player} disconnected.`, LogTypes.Player);
+   let instancePlayer = player;
+   alt.emit("system:database::leave", instancePlayer);
+
+   _log.stream(`${player.name} disconnected.`, LogTypes.Player);
 });
