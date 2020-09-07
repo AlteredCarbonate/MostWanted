@@ -5,6 +5,7 @@ import { ConsoleTypes } from "../enums/ConsoleTypes";
 import { LogTypes } from "../enums/LogTypes";
 import { CommandList } from "../enums/CommandList";
 import { log } from "../util";
+import { PlayerHandler } from "../database/handler/newHandler";
 
 let _log = new log();
 
@@ -13,6 +14,7 @@ alt.onClient(
    async (player: alt.Player, args: any[]) => {
       if (!args) return;
       let prefix = args[0];
+      let _playerDB: PlayerHandler = new PlayerHandler();
 
       switch (prefix) {
          case CommandList.Vehicle:
@@ -87,6 +89,9 @@ alt.onClient(
                );
             }
 
+            break;
+         case "create":
+            _playerDB.createAccount(player);
             break;
       }
    }

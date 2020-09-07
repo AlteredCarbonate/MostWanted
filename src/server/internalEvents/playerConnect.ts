@@ -3,7 +3,7 @@ import * as alt from "alt-server";
 import { LogTypes } from "../enums/LogTypes";
 import { Config } from "../configuration/config";
 import { log } from "../util";
-import { PlayerHandler } from "../database/handler/PlayerHandler";
+import { PlayerHandler } from "../database/handler/newHandler";
 
 let _log = new log();
 let _playerDB: PlayerHandler = new PlayerHandler();
@@ -13,7 +13,7 @@ alt.on("playerConnect", async (player: alt.Player) => {
 
    handshake(player);
 
-   // _playerDB.createAccount(player);
+   _playerDB.requestAccount(player);
    // _playerDB.joinLobby(player).then(() => {
    //    console.log(chalk.redBright("Go fuck yourself"));
    // });
@@ -37,21 +37,20 @@ function handshake(player: alt.Player) {
       player.model = "g_f_importexport_01";
       player.health = 200;
    });
-
-   _playerDB
-      .requestAccount(player)
-      .then((res) => {
-         if (res) {
-            alt.emit("system:database::join", player);
-         }
-      })
-      .catch((err) => {
-         if (err === "No Account") {
-            _playerDB.createAccount(player).then(() => {
-               alt.emit("system:database::join", player);
-            });
-         }
-      });
+   // _playerDB
+   //    .requestAccount(player)
+   //    .then((res) => {
+   //       if (res) {
+   //          alt.emit("system:database::join", player);
+   //       }
+   //    })
+   //    .catch((err) => {
+   //       if (err === "No Account") {
+   //          _playerDB.createAccount(player).then(() => {
+   //             alt.emit("system:database::join", player);
+   //          });
+   //       }
+   //    });
 }
 
 // alt.on(

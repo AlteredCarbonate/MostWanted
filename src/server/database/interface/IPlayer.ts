@@ -1,7 +1,7 @@
+import { IPlayerModel } from "../schema/interface/IPlayerModel";
 export interface IPlayer {
-   readonly _id?: number;
-   userName: string;
-   socialID: number;
-   rank: number;
-   createdAt: string;
+   userName: IPlayerModel["userName"];
+   socialID: IPlayerModel["socialID"];
+   rank?: IPlayerModel["rank"];
+   createdAt?: IPlayerModel["createdAt"];
 }
