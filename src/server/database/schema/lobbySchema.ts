@@ -3,7 +3,7 @@ import { LobbyStates } from "../../systems/lobby/enum/LobbyStates";
 
 export const lobbySchema = new mongoose.Schema({
    userName: { type: mongoose.Schema.Types.ObjectId, ref: "player" },
-   role: String,
+   role: { type: String, default: "UNDEFINED" },
    state: {
       type: String,
       enum: Object.values(LobbyStates),

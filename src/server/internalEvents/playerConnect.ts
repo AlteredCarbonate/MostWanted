@@ -13,7 +13,7 @@ alt.on("playerConnect", async (player: alt.Player) => {
 
    handshake(player);
 
-   _playerDB.requestAccount(player);
+   _playerDB.request(player);
    // _playerDB.joinLobby(player).then(() => {
    //    console.log(chalk.redBright("Go fuck yourself"));
    // });

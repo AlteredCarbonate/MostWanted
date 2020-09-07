@@ -6,6 +6,7 @@ import { LogTypes } from "../enums/LogTypes";
 import { CommandList } from "../enums/CommandList";
 import { log } from "../util";
 import { PlayerHandler } from "../database/handler/newHandler";
+import { LobbyHandler } from "../database/handler/LobbyHandler";
 
 let _log = new log();
 
@@ -15,6 +16,7 @@ alt.onClient(
       if (!args) return;
       let prefix = args[0];
       let _playerDB: PlayerHandler = new PlayerHandler();
+      let _lobbyDB: LobbyHandler = new LobbyHandler();
 
       switch (prefix) {
          case CommandList.Vehicle:
@@ -90,8 +92,15 @@ alt.onClient(
             }
 
             break;
-         case "create":
-            _playerDB.createAccount(player);
+         case "createAcc":
+            _playerDB.create(player);
+            break;
+
+         case "joinLobby":
+            _lobbyDB.join(player);
+            break;
+         case "leaveLobby":
+            _lobbyDB.leave(player);
             break;
       }
    }
