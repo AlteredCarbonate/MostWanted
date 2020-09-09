@@ -1,156 +1,70 @@
-// import * as alt from "alt-server";
+import * as alt from "alt-server";
+import { playerModel, playerDataModel } from "../models";
+import { IPlayer } from "../interface/IPlayer";
+import * as chalk from "chalk";
+import { IPlayerData } from "../interface/IPlayerData";
 // import * as moment from "moment";
 // import * as chalk from "chalk";
 
-// import { playerModel, lobbyModel } from "../models";
-// import { IPlayer } from "../interface/Iplayer";
-// import { ILobby } from "../interface/ILobby";
-// import { LobbyStates } from "../../systems/lobby/enum/LobbyStates";
+export class PlayerHandler {
+   constructor() {}
 
-// export class PlayerHandler {
-//    constructor() {}
+   /**
+    * Returns NULL if not found.
+    * @param  where Default: player.name
+    *
+    */
+   public request(player: alt.Player, where = player.name) {
+      return playerModel.findOne({ userName: where });
+   }
 
-//    public createAccount(player: alt.Player): Promise<IPlayer> {
-//       return new Promise(async (res, rej) => {
-//          playerModel.findOne({ userName: player.name }, (err, result) => {
-//             if (err) {
-//                console.log(
-//                   chalk.redBright(
-//                      "[DATABASE] createAccount Error:\n" + err.message
-//                   )
-//                );
+   /**
+    * Creates User Account
+    */
+   public async create(player: alt.Player) {
+      let _playerAccount = await this.request(player);
 
-//                rej(err);
-//             }
-//             if (!result) {
-//                const data = {
-//                   userName: player.name,
-//                   socialID: parseInt(player.socialId),
-//                   rank: 0,
-//                   createdAt: moment().format(),
-//                };
+      if (_playerAccount === null) {
+         const data: IPlayer = {
+            userName: player.name,
+         };
 
-//                playerModel.insertMany([data]).then(() => {
-//                   console.log(chalk.greenBright("[DATABASE] Account Created"));
-//                   res();
-//                });
-//             } else {
-//                console.log(
-//                   chalk.greenBright("[DATABASE] Account already Found")
-//                );
-//                res(null);
-//             }
-//          });
-//       });
-//    }
-
-//    public requestAccount(player: alt.Player): Promise<IPlayer> {
-//       return new Promise(async (res, rej) => {
-//          playerModel.findOne(
-//             { userName: player.name },
-//             (err, result: IPlayer) => {
-//                console.log(chalk.redBright("FatCunt, requested account"));
-//                if (err) {
-//                   console.log(
-//                      chalk.redBright(
-//                         "[DATABASE] requestAccount Error:\n" + err.message
-//                      )
-//                   );
-
-//                   rej(err);
-//                }
-
-//                if (result) {
-//                   res(result);
-//                } else {
-//                   res(null);
-//                }
-//             }
-//          );
-//       });
-//    }
-
-//    public async requestLobby(player: alt.Player): Promise<ILobby> {
-//       return new Promise(async (res, rej) => {
-//          let _account = await this.requestAccount(player);
-//          console.log(`RequestLobby ${_account}`);
-
-//          if (_account !== null) {
-//             lobbyModel.findOne(
-//                { userName: _account._id },
-//                (err, result: ILobby) => {
-//                   if (err) {
-//                      console.log(
-//                         chalk.redBright(
-//                            "[DATABASE] requestLobby Error:\n" + err.message
-//                         )
-//                      );
-
-//                      rej(err);
-//                   }
-//                   if (result) {
-//                      res();
-//                   } else {
-//                      res(null);
-//                   }
-//                }
-//             );
-//          }
-//       });
-//    }
-
-//    public joinLobby(player: alt.Player): Promise<ILobby> {
-//       return new Promise(async (res, rej) => {
-//          let _account = await this.requestAccount(player);
-//          this.requestLobby(player).then((result) => {
-//             if (result === null) {
-//                const data = {
-//                   userName: _account._id,
-//                   role: "UNDEFINED",
-//                   state: LobbyStates.Init,
-//                };
-
-//                lobbyModel.insertMany([data]).then(() => {
-//                   console.log(
-//                      chalk.greenBright(
-//                         `[DATABASE] ${player.name} joined the Lobby.`
-//                      )
-//                   );
-//                   res();
-//                });
-//             }
-//          });
-//       });
-//    }
-
-//    public leaveLobby(player: alt.Player): Promise<IPlayer> {
-//       return new Promise(async (res, rej) => {
-//          let _lobby = await this.requestLobby(player);
-//          console.log("leaveLobby");
-//          console.log(_lobby);
-//          if (_lobby !== null) {
-//             _lobby
-//                .deleteOne()
-//                .then(() => {
-//                   console.log(
-//                      chalk.greenBright(
-//                         `[DATABASE] ${player.name} left the Lobby.`
-//                      )
-//                   );
-//                   res();
-//                })
-//                .catch((err) => {
-//                   if (err) {
-//                      console.log(
-//                         chalk.redBright(
-//                            "[DATABASE] leaveLobby Error:\n" + err.message
-//                         )
-//                      );
-
-//                      rej(err);
-//                   }
-//                });
-//          }
-//       });
-//    }
-// }
+         const data2: IPlayerData = {
+            socialID: parseInt(player.socialId),
+            ip: player.ip.replace("::ffff:", ""),
+            hwid: parseInt(player.hwidHash),
+         };
+         this.appendData(data);
+         this.appendData(data2, "playerDataModel");
+         console.log(chalk.greenBright("Account created."));
+      } else {
+         console.log(chalk.redBright("Account already found."));
+      }
+   }
+   /**
+    * Appends Data to the choosen Collection
+    * @param collection Default: playerModel
+    */
+   public async appendData(
+      data: IPlayer | IPlayerData,
+      collection: "playerModel" | "playerDataModel" = "playerModel"
+   ) {
+      if (!data) {
+         return console.log(
+            chalk.redBright("[LobbyHandler]: Can't append Data of Undefined.")
+         );
+      }
+      switch (collection) {
+         case "playerModel":
+            await playerModel.insertMany([data]);
+            console.log(chalk.greenBright("[playerModel]: Appending data..."));
+            break;
+         case "playerDataModel":
+            await playerDataModel.insertMany([data]);
+            console.log(
+               chalk.greenBright("[playerDataModel]: Appending data...")
+            );
+            break;
+      }
+   }
+}

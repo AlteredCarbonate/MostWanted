@@ -5,7 +5,7 @@ import { LogTypes } from "../enums/LogTypes";
 import { log } from "../util";
 let _log = new log();
 
-alt.on("playerDisconnect", (player: alt.Player) => {
+alt.on("playerDisconnect", async (player: alt.Player) => {
    // let instancePlayer = player;
    alt.emit("system:database::leave", player);
 

@@ -1,8 +1,9 @@
 import * as alt from "alt-server";
-import { PlayerHandler } from "./newHandler";
+import * as chalk from "chalk";
+
+import { PlayerHandler } from "./PlayerHandler";
 import { ILobby } from "../interface/ILobby";
 import { lobbyModel } from "../models";
-import * as chalk from "chalk";
 
 export class LobbyHandler {
    _playerDB: PlayerHandler;
@@ -28,7 +29,8 @@ export class LobbyHandler {
             userName: _playerAccount._id,
          };
 
-         lobbyModel.insertMany([data]);
+         this.appendData(data);
+
          console.log(chalk.greenBright(`${player.name} joined the Lobby.`));
       } else {
          console.log(chalk.redBright(`${player.name} already in the Lobby.`));
@@ -46,5 +48,15 @@ export class LobbyHandler {
       } else {
          console.log(chalk.redBright(`${player.name} not in the Lobby.`));
       }
+   }
+
+   public async appendData(data: ILobby) {
+      console.log(chalk.greenBright("Appending data..."));
+      if (!data) {
+         return console.log(
+            chalk.redBright("[LobbyHandler]: Can't append Data of Undefined.")
+         );
+      }
+      await lobbyModel.insertMany([data]);
    }
 }
