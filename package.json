@@ -31,7 +31,9 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "@types/mongoose": "^5.7.36",
     "chalk": "^4.1.0",
-    "moment": "^2.27.0"
+    "moment": "^2.27.0",
+    "mongoose": "^5.10.3"
   }
 }

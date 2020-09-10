@@ -1,18 +1,31 @@
 import * as alt from "alt-server";
-import * as log from "../configuration/log";
+
 import { LogTypes } from "../enums/LogTypes";
 import { Config } from "../configuration/config";
+import { log } from "../util";
+import { PlayerHandler } from "../database/handler/PlayerHandler";
 
-alt.on("playerConnect", (player: alt.Player) => {
-   log.stream(`${player.name} connected.`, LogTypes.Player);
+let _log = new log();
+let _playerDB: PlayerHandler = new PlayerHandler();
+
+alt.on("playerConnect", async (player: alt.Player) => {
+   _log.stream(`${player.name} connected.`, LogTypes.Player);
+
    handshake(player);
+
+   _playerDB.request(player);
+   // _playerDB.joinLobby(player).then(() => {
+   //    console.log(chalk.redBright("Go fuck yourself"));
+   // });
+
    alt.emitClient(player, "server:startHandshake");
 });
 
 function handshake(player: alt.Player) {
-   alt.emit("system:lobby::init", player);
+   // alt.emit("system:lobby::init", player);
+
    alt.onClient("client:endHandshake", (player: alt.Player) => {
-      log.stream(
+      _log.stream(
          `${player.name} Handshake complete, answered successful.`,
          LogTypes.Player
       );
@@ -24,6 +37,20 @@ function handshake(player: alt.Player) {
       player.model = "g_f_importexport_01";
       player.health = 200;
    });
+   // _playerDB
+   //    .requestAccount(player)
+   //    .then((res) => {
+   //       if (res) {
+   //          alt.emit("system:database::join", player);
+   //       }
+   //    })
+   //    .catch((err) => {
+   //       if (err === "No Account") {
+   //          _playerDB.createAccount(player).then(() => {
+   //             alt.emit("system:database::join", player);
+   //          });
+   //       }
+   //    });
 }
 
 // alt.on(

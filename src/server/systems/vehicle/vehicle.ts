@@ -1,7 +1,10 @@
 import * as alt from "alt-server";
+
 import { Config } from "../../configuration/config";
-import * as log from "../../configuration/log";
 import { LogTypes } from "../../enums/LogTypes";
+import { log } from "../../util";
+
+let _log = new log();
 
 export async function spawn(
    player: alt.Player,
@@ -52,7 +55,7 @@ export async function spawn(
             res(vehicle);
          }
       } catch (error) {
-         log.stream("spawnVehicle => " + error, LogTypes.Server);
+         _log.stream("spawnVehicle => " + error, LogTypes.Server);
          rej(error);
       }
    });
@@ -72,8 +75,8 @@ export async function remove(player: alt.Player): Promise<any> {
          });
          res("All valid cars destroyed.");
       } catch (error) {
-         log.stream("removeVehicle => " + error, LogTypes.Server);
-         rej(log.console(error));
+         _log.stream("removeVehicle => " + error, LogTypes.Server);
+         rej(_log.console(error));
       }
    });
 }

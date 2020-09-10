@@ -1,8 +1,9 @@
-import * as log from "../configuration/log";
+import { missions } from "../../../configuration/missions";
+import { IMission } from "../../../interfaces/IMission";
+import { LogTypes } from "../../../enums/LogTypes";
+import { log } from "../../../util";
 
-import { missions } from "../configuration/missions";
-import { IMission } from "../interfaces/IMission";
-import { LogTypes } from "../enums/LogTypes";
+let _log = new log();
 
 let localMission: Array<IMission> = [...missions];
 let length = localMission.length - 1;
@@ -22,9 +23,9 @@ export class MissionHandler {
     * @param  {} index=0
     */
    public remove(pos: removePos = removePos.start, index = 0) {
-      if (length === -1) return console.log("Can't remove Entry");
+      if (length === -1) return _log.console("Can't remove Entry");
       localMission.forEach((item) => {
-         console.log(item.missionName);
+         _log.console(item.missionName);
       });
       switch (pos) {
          case removePos.start:
@@ -49,7 +50,7 @@ export class MissionHandler {
                res(item);
             });
          } catch (error) {
-            log.stream("MissionHandler forEach => " + error, LogTypes.Server);
+            _log.stream("MissionHandler forEach => " + error, LogTypes.Server);
 
             rej(error);
          }
