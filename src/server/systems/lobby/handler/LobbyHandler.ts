@@ -2,8 +2,8 @@ import * as alt from "alt-server";
 import * as chalk from "chalk";
 
 import { PlayerHandler } from "./PlayerHandler";
-import { ILobby } from "../interface/ILobby";
-import { lobbyModel } from "../models";
+import { ILobby } from "../../../database/interface/ILobby";
+import { lobbyModel } from "../../../database/models";
 
 export class LobbyHandler {
    _playerDB: PlayerHandler;

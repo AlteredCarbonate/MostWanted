@@ -19,8 +19,6 @@ export class MissionHandler {
 
    /**
     * Removes one Entry
-    * @param  {removePos=removePos.start} pos
-    * @param  {} index=0
     */
    public remove(pos: removePos = removePos.start, index = 0) {
       if (length === -1) return _log.console("Can't remove Entry");
@@ -46,9 +44,9 @@ export class MissionHandler {
    public forEach(): Promise<any> {
       return new Promise((res, rej) => {
          try {
-            localMission.forEach((item) => {
-               res(item);
-            });
+            for (const missions in localMission) {
+               res(missions);
+            }
          } catch (error) {
             _log.stream("MissionHandler forEach => " + error, LogTypes.Server);
 
@@ -57,8 +55,7 @@ export class MissionHandler {
       });
    }
    /**
-    * Gives one entry based on Index, retrieves callback
-    * @param  {} index
+    * Gives one entry based on Index.
     */
    public result(index = 0) {
       return localMission[index];

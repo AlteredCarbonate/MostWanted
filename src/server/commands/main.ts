@@ -5,8 +5,8 @@ import { ConsoleTypes } from "../enums/ConsoleTypes";
 import { LogTypes } from "../enums/LogTypes";
 import { CommandList } from "../enums/CommandList";
 import { log } from "../util";
-import { PlayerHandler } from "../database/handler/PlayerHandler";
-import { LobbyHandler } from "../database/handler/LobbyHandler";
+import { PlayerHandler } from "../systems/lobby/handler/PlayerHandler";
+import { LobbyHandler } from "../systems/lobby/handler/LobbyHandler";
 
 let _log = new log();
 

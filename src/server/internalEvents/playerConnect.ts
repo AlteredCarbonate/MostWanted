@@ -3,7 +3,7 @@ import * as alt from "alt-server";
 import { LogTypes } from "../enums/LogTypes";
 import { Config } from "../configuration/config";
 import { log } from "../util";
-import { PlayerHandler } from "../database/handler/PlayerHandler";
+import { PlayerHandler } from "../systems/lobby/handler/PlayerHandler";
 
 let _log = new log();
 let _playerDB: PlayerHandler = new PlayerHandler();
