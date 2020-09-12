@@ -30,13 +30,15 @@ export class PlayerHandler {
             userName: player.name,
          };
 
-         const data2: IPlayerData = {
+         const accountData: IPlayerData = {
             socialID: parseInt(player.socialId),
             ip: player.ip.replace("::ffff:", ""),
             hwid: parseInt(player.hwidHash),
          };
+
          this.appendData(data);
-         this.appendData(data2, "playerDataModel");
+         this.appendData(accountData, "playerDataModel");
+
          console.log(chalk.greenBright("Account created."));
       } else {
          console.log(chalk.redBright("Account already found."));

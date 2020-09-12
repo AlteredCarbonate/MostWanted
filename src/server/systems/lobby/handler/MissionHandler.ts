@@ -5,9 +5,8 @@ import { log } from "../../../util";
 
 let _log = new log();
 
-let localMission: Array<IMission> = [...missions];
-let length = localMission.length - 1;
-// const target = localMission.findIndex((item) => item.id == player.id);
+let localMissions: IMission = Object.assign({}, missions);
+
 export enum removePos {
    start,
    end,
@@ -22,20 +21,21 @@ export class MissionHandler {
     */
    public remove(pos: removePos = removePos.start, index = 0) {
       if (length === -1) return _log.console("Can't remove Entry");
-      localMission.forEach((item) => {
-         _log.console(item.missionName);
-      });
-      switch (pos) {
-         case removePos.start:
-            localMission.shift();
-            break;
-         case removePos.end:
-            localMission.pop();
-            break;
-         case removePos.index:
-            localMission.splice(index, 1);
-            break;
-      }
+
+      // localMissions.forEach((item) => {
+      //    _log.console(item.missionName);
+      // });
+      // switch (pos) {
+      //    case removePos.start:
+      //       localMissions.shift();
+      //       break;
+      //    case removePos.end:
+      //       localMissions.pop();
+      //       break;
+      //    case removePos.index:
+      //       localMissions.splice(index, 1);
+      //       break;
+      // }
    }
 
    /**
@@ -44,8 +44,8 @@ export class MissionHandler {
    public forEach(): Promise<any> {
       return new Promise((res, rej) => {
          try {
-            for (const missions in localMission) {
-               res(missions);
+            for (const mission in localMissions) {
+               res(localMissions[mission]);
             }
          } catch (error) {
             _log.stream("MissionHandler forEach => " + error, LogTypes.Server);
@@ -58,13 +58,13 @@ export class MissionHandler {
     * Gives one entry based on Index.
     */
    public result(index = 0) {
-      return localMission[index];
+      return localMissions[index];
    }
 
    /**
     * Resets the Array to the Default
     */
    public reset() {
-      localMission = [...missions];
+      localMissions = Object.assign({}, missions);
    }
 }

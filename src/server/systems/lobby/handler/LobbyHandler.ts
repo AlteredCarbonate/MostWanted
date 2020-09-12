@@ -21,8 +21,12 @@ export class LobbyHandler {
    }
 
    public async join(player: alt.Player) {
-      let _playerAccount = await this._playerDB.request(player);
-      let _lobby = await this.request(player);
+      let [_playerAccount, _lobby] = await Promise.all([
+         this._playerDB.request(player),
+         this.request(player),
+      ]);
+      // let _playerAccount = await this._playerDB.request(player);
+      // let _lobby = await this.request(player);
 
       if (_lobby === null) {
          const data: ILobby = {
@@ -38,8 +42,10 @@ export class LobbyHandler {
    }
 
    public async leave(player: alt.Player) {
-      let _playerAccount = await this._playerDB.request(player);
-      let _lobby = await this.request(player);
+      let [_playerAccount, _lobby] = await Promise.all([
+         this._playerDB.request(player),
+         this.request(player),
+      ]);
 
       if (_lobby !== null) {
          await lobbyModel.deleteOne({ userName: _playerAccount._id });
