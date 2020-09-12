@@ -1,8 +1,11 @@
+import "./models";
+import "./missionStartup";
+
+import * as alt from "alt-server";
 import * as chalk from "chalk";
 import * as mongoose from "mongoose";
 import { dbURL } from "../configuration/config";
-
-import "./models";
+import { events } from "../systems/eventLibary";
 
 console.log(chalk.greenBright("[DATABASE] Startup"));
 
@@ -13,7 +16,8 @@ mongoose.connect(dbURL, {
 });
 
 mongoose.connection.on("connected", () => {
-   console.log(chalk.greenBright("[DATABASE] Connection Successful\n"));
+   console.log(chalk.greenBright("[DATABASE] Connection Successful."));
+   alt.emit(events.system.database.init);
 });
 
 mongoose.connection.on("error", (err) => {

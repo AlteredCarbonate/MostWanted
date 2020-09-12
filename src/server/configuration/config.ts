@@ -10,10 +10,11 @@ export const Config = {
    vehiclePlateName: "MW",
    // LOBBY
    minPlayer: 0,
-   defaultTimer: 60000 * 0.25,
-   unprepTimer: 60000 * 1.5,
+   prepTimer: 1000 * 15,
+   unprepTimer: 1000 * 60,
+   initTimer: 1000 * 5,
    // WEATHER
-   weatherCycleTime: 60000 * 5,
+   weatherCycleTime: 1000 * 5,
    weatherCycle: [
       0, // Extra sunny
       0, // Extra sunny
