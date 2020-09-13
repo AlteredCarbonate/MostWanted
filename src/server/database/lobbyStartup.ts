@@ -4,6 +4,6 @@ import { LobbyHandler } from "../systems/lobby/handler/LobbyHandler";
 
 let handler = new LobbyHandler();
 
-alt.on(events.system.database.init, () => {
+alt.on(events.system.database.init, async () => {
    handler.updateData();
 });

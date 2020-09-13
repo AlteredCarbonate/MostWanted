@@ -20,10 +20,10 @@ export class TimerHandler {
 
          switch (type) {
             case TimerTypes.Prep:
-               diff = moment().add(CONFIG.prepTimer, "ms");
+               diff = moment().add(CONFIG.LOBBY.PREPTIME, "ms");
                break;
             case TimerTypes.Unprep:
-               diff = moment().add(CONFIG.unprepTimer, "ms");
+               diff = moment().add(CONFIG.LOBBY.UNPREPTIME, "ms");
                break;
          }
 
@@ -46,7 +46,7 @@ export class TimerHandler {
    public startInit() {
       return new Promise((res, rej) => {
          let diff, countDown;
-         diff = moment().add(CONFIG.initTimer, "ms");
+         diff = moment().add(CONFIG.LOBBY.INITTIME, "ms");
 
          this._timerInt = alt.setInterval(() => {
             countDown = Math.abs(Math.floor(moment().diff(diff) / 1000));

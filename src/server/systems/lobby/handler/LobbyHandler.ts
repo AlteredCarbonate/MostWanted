@@ -4,12 +4,15 @@ import { PlayerHandler } from "./PlayerHandler";
 import { ILobby } from "../../../database/interface/ILobby";
 import { lobbyModel } from "../../../database/models";
 import { IInstance } from "../../../interfaces/IInstance";
+import { GameHandler } from "./GameHandler";
 
 export class LobbyHandler {
    _playerDB: PlayerHandler;
+   _game: GameHandler;
 
    constructor() {
       this._playerDB = new PlayerHandler();
+      this._game = GameHandler.getInstance();
    }
 
    public updateData() {
@@ -17,11 +20,15 @@ export class LobbyHandler {
       lobbyModel.collection.deleteMany({});
    }
 
-   public async request(instance: IInstance) {
+   public async request(instance: IInstance, all: boolean = false) {
       let _playerAccount = await this._playerDB.request(instance);
 
       if (_playerAccount !== null) {
-         return lobbyModel.findOne({ userName: _playerAccount._id });
+         if (!all) {
+            return lobbyModel.findOne({ userName: _playerAccount._id });
+         } else {
+            return lobbyModel.find({});
+         }
       }
       return null;
    }
@@ -40,8 +47,9 @@ export class LobbyHandler {
          };
 
          this.appendData(data);
-
          console.log(chalk.greenBright(`${instance.name} joined the Lobby.`));
+
+         this._game.modifyAmount("increase");
       } else {
          console.log(chalk.redBright(`${instance.name} already in the Lobby.`));
       }

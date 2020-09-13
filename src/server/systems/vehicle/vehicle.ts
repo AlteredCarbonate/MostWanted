@@ -47,7 +47,7 @@ export async function spawn(
                vehicle.modKit = 1;
             }
 
-            vehicle.numberPlateText = CONFIG.vehiclePlateName;
+            vehicle.numberPlateText = CONFIG.VEHICLE.PLATENAME;
 
             alt.emitClient(player, "vehicle:SetIntoVehicle", vehicle);
             vehicle.lockState = 1;

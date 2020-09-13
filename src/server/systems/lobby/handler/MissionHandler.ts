@@ -1,70 +1,56 @@
-import { missions } from "../../../configuration/missions";
-import { IMission } from "../../../interfaces/IMission";
-import { LogTypes } from "../../../enums/LogTypes";
-import { log } from "../../../util";
+// const blips = {};
+// const blip = { identifier:"veh", label:"vendor", position:null, sprite:null, color:null, scale:null, shortRange:null };
 
-let _log = new log();
+// blips[blip.identifier] = blip;
 
-let localMissions: IMission = Object.assign({}, missions);
+import { util } from "../../../util";
+import { missionModel } from "../../../database/models";
+import * as chalk from "chalk";
 
-export enum removePos {
-   start,
-   end,
-   index,
-}
+const _util = new util();
 
 export class MissionHandler {
-   constructor() {}
+   missionAmount: number = -1;
+   dataUpToDate: boolean = false;
 
-   /**
-    * Removes one Entry
-    */
-   public remove(pos: removePos = removePos.start, index = 0) {
-      if (length === -1) return _log.console("Can't remove Entry");
+   static _instance: MissionHandler;
+   private constructor() {}
 
-      // localMissions.forEach((item) => {
-      //    _log.console(item.missionName);
-      // });
-      // switch (pos) {
-      //    case removePos.start:
-      //       localMissions.shift();
-      //       break;
-      //    case removePos.end:
-      //       localMissions.pop();
-      //       break;
-      //    case removePos.index:
-      //       localMissions.splice(index, 1);
-      //       break;
-      // }
+   public static getInstance() {
+      return this._instance || (this._instance = new this());
    }
 
-   /**
-    * forEach inside the Array, retrieves callback
-    */
-   public forEach(): Promise<any> {
-      return new Promise((res, rej) => {
-         try {
-            for (const mission in localMissions) {
-               res(localMissions[mission]);
-            }
-         } catch (error) {
-            _log.stream("MissionHandler forEach => " + error, LogTypes.Server);
+   public updateData() {
+      console.log(chalk.greenBright("[DATABASE] Updating Mission Data"));
 
-            rej(error);
+      missionModel.find().then((res) => {
+         if (res.length >= 1) {
+            this.missionAmount = res.length - 1;
+            this.dataUpToDate = true;
          }
       });
    }
-   /**
-    * Gives one entry based on Index.
-    */
-   public result(index = 0) {
-      return localMissions[index];
-   }
 
    /**
-    * Resets the Array to the Default
+    * Return Random Mission data
+    * Requires AWAIT
     */
-   public reset() {
-      localMissions = Object.assign({}, missions);
+   public request() {
+      if (!this.dataUpToDate) {
+         console.log(
+            chalk.redBright("[DATABASE]: Data not Updated, may be wrong!")
+         );
+      }
+
+      if (this.missionAmount <= -1) {
+         return console.log(
+            chalk.redBright("Unable to request UNDEFINED Data.")
+         );
+      }
+
+      return missionModel.findOne({
+         //  index: 0,
+         index: _util.randomInt(this.missionAmount),
+      });
    }
 }
