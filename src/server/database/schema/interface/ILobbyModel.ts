@@ -5,7 +5,7 @@ import { IPlayerModel } from "./IPlayerModel";
 import { LobbyRoles } from "../../../systems/lobby/enum/LobbyRoles";
 
 export interface ILobbyModel extends Document {
-   userName: IPlayerModel["_id"];
+   playerReference: IPlayerModel["_id"];
    role: LobbyRoles;
    state: LobbyStates;
 }

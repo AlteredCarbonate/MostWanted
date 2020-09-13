@@ -2,7 +2,7 @@ import * as alt from "alt-server";
 import * as moment from "moment";
 import { TimerTypes } from "../../../enums/systems/TimerTypes";
 import { events } from "../../eventLibary";
-import { Config } from "../../../configuration/config";
+import { CONFIG } from "../../../CONFIGuration/CONFIG";
 
 export class TimerHandler {
    constructer() {}
@@ -20,10 +20,10 @@ export class TimerHandler {
 
          switch (type) {
             case TimerTypes.Prep:
-               diff = moment().add(Config.prepTimer, "ms");
+               diff = moment().add(CONFIG.prepTimer, "ms");
                break;
             case TimerTypes.Unprep:
-               diff = moment().add(Config.unprepTimer, "ms");
+               diff = moment().add(CONFIG.unprepTimer, "ms");
                break;
          }
 
@@ -46,7 +46,7 @@ export class TimerHandler {
    public startInit() {
       return new Promise((res, rej) => {
          let diff, countDown;
-         diff = moment().add(Config.initTimer, "ms");
+         diff = moment().add(CONFIG.initTimer, "ms");
 
          this._timerInt = alt.setInterval(() => {
             countDown = Math.abs(Math.floor(moment().diff(diff) / 1000));

@@ -7,6 +7,7 @@ import { CommandList } from "../enums/CommandList";
 import { log } from "../util";
 import { PlayerHandler } from "../systems/lobby/handler/PlayerHandler";
 import { LobbyHandler } from "../systems/lobby/handler/LobbyHandler";
+import { IInstance } from "../interfaces/IInstance";
 
 let _log = new log();
 
@@ -17,6 +18,13 @@ alt.onClient(
       let prefix = args[0];
       let _playerDB: PlayerHandler = new PlayerHandler();
       let _lobbyDB: LobbyHandler = new LobbyHandler();
+
+      let instance: IInstance = {
+         name: player.name,
+         socialID: player.socialId,
+         hwid: player.hwidHash,
+         ip: player.ip,
+      };
 
       switch (prefix) {
          case CommandList.Vehicle:
@@ -93,14 +101,14 @@ alt.onClient(
 
             break;
          case "createAcc":
-            _playerDB.create(player);
+            _playerDB.create(instance);
             break;
 
          case "joinLobby":
-            _lobbyDB.join(player);
+            _lobbyDB.join(instance);
             break;
          case "leaveLobby":
-            _lobbyDB.leave(player);
+            _lobbyDB.leave(instance);
             break;
       }
    }

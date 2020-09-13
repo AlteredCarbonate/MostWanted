@@ -1,21 +1,29 @@
 import * as alt from "alt-server";
 
 import { LogTypes } from "../enums/LogTypes";
-import { Config } from "../configuration/config";
+import { CONFIG } from "../configuration/config";
 import { log } from "../util";
 import { PlayerHandler } from "../systems/lobby/handler/PlayerHandler";
 import { events } from "../systems/eventLibary";
+import { IInstance } from "../interfaces/IInstance";
 
 let _log = new log();
 let _playerDB: PlayerHandler = new PlayerHandler();
 
 alt.on("playerConnect", async (player: alt.Player) => {
+   let instance: IInstance = {
+      name: player.name,
+      socialID: player.socialId,
+      hwid: player.hwidHash,
+      ip: player.ip,
+   };
+
    alt.emitClient(player, "server:startHandshake");
    handshake(player);
 
-   _log.stream(`${player.name} connected.`, LogTypes.Player);
+   _log.stream(`${instance.name} connected.`, LogTypes.Player);
 
-   await _playerDB.create(player).then(() => {
+   await _playerDB.create(instance).then(() => {
       alt.emit(events.system.lobby.join, player);
    });
 });
@@ -27,9 +35,9 @@ function handshake(player: alt.Player) {
          LogTypes.Player
       );
       player.pos = new alt.Vector3(
-         Config.defaultSpawnPoint.x,
-         Config.defaultSpawnPoint.y,
-         Config.defaultSpawnPoint.z
+         CONFIG.SPAWN.x,
+         CONFIG.SPAWN.y,
+         CONFIG.SPAWN.z
       );
       player.model = "g_f_importexport_01";
       player.health = 200;

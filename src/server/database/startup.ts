@@ -1,5 +1,6 @@
 import "./models";
 import "./missionStartup";
+import "./lobbyStartup";
 
 import * as alt from "alt-server";
 import * as chalk from "chalk";

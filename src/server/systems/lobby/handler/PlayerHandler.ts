@@ -1,8 +1,8 @@
-import * as alt from "alt-server";
 import * as chalk from "chalk";
-import { playerModel, playerDataModel } from "../../../database/models";
-import { IPlayerData } from "../../../database/interface/IPlayerData";
+import { playerModel, accountDataModel } from "../../../database/models";
+import { IAccountData } from "../../../database/interface/IAccountData";
 import { IPlayer } from "../../../database/interface/IPlayer";
+import { IInstance } from "../../../interfaces/IInstance";
 
 // import * as moment from "moment";
 // import * as chalk from "chalk";
@@ -12,45 +12,53 @@ export class PlayerHandler {
 
    /**
     * Returns NULL if not found.
-    * @param  where Default: player.name
-    *
     */
-   public request(player: alt.Player, where = player.name) {
-      return playerModel.findOne({ userName: where });
+   public request(target: IInstance) {
+      return playerModel.findOne({
+         userName: target.name,
+      });
    }
 
    /**
     * Creates User Account
     */
-   public async create(player: alt.Player) {
-      let _playerAccount = await this.request(player);
+   public async create(instance: IInstance) {
+      let _playerAccount = await this.request(instance);
 
       if (_playerAccount === null) {
          const data: IPlayer = {
-            userName: player.name,
+            userName: instance.name,
          };
 
-         const accountData: IPlayerData = {
-            socialID: parseInt(player.socialId),
-            ip: player.ip.replace("::ffff:", ""),
-            hwid: parseInt(player.hwidHash),
-         };
-
-         this.appendData(data);
-         this.appendData(accountData, "playerDataModel");
+         await this.appendData(data).then(() => {
+            this.createData(instance);
+         });
 
          console.log(chalk.greenBright("Account created."));
       } else {
          console.log(chalk.redBright("Account already found."));
       }
    }
+
+   public async createData(instance: IInstance) {
+      let _playerAccount = await this.request(instance);
+      const accountData: IAccountData = {
+         playerReference: _playerAccount._id,
+         socialID: parseInt(instance.socialID),
+         ip: instance.ip.replace("::ffff:", ""),
+         hwid: parseInt(instance.hwid),
+      };
+
+      await this.appendData(accountData, "accountData");
+      console.log(chalk.greenBright("AccountData added."));
+   }
    /**
     * Appends Data to the choosen Collection
-    * @param collection Default: playerModel
+    * @param collection Default: player
     */
    public async appendData(
-      data: IPlayer | IPlayerData,
-      collection: "playerModel" | "playerDataModel" = "playerModel"
+      data: IPlayer | IAccountData,
+      collection: "player" | "accountData" = "player"
    ) {
       if (!data) {
          return console.log(
@@ -58,14 +66,14 @@ export class PlayerHandler {
          );
       }
       switch (collection) {
-         case "playerModel":
+         case "player":
             await playerModel.insertMany([data]);
             console.log(chalk.greenBright("[playerModel]: Appending data..."));
             break;
-         case "playerDataModel":
-            await playerDataModel.insertMany([data]);
+         case "accountData":
+            await accountDataModel.insertMany([data]);
             console.log(
-               chalk.greenBright("[playerDataModel]: Appending data...")
+               chalk.greenBright("[accountDataModel]: Appending data...")
             );
             break;
       }

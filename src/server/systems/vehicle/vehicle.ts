@@ -1,6 +1,6 @@
 import * as alt from "alt-server";
 
-import { Config } from "../../configuration/config";
+import { CONFIG } from "../../configuration/config";
 import { LogTypes } from "../../enums/LogTypes";
 import { log } from "../../util";
 
@@ -47,7 +47,7 @@ export async function spawn(
                vehicle.modKit = 1;
             }
 
-            vehicle.numberPlateText = Config.vehiclePlateName;
+            vehicle.numberPlateText = CONFIG.vehiclePlateName;
 
             alt.emitClient(player, "vehicle:SetIntoVehicle", vehicle);
             vehicle.lockState = 1;
