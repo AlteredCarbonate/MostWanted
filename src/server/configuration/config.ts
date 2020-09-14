@@ -6,12 +6,12 @@ export const CONFIG = {
       y: -787.5165,
       z: 30.0212,
    },
-
    VEHICLE: {
       PLATENAME: "MW",
    },
+   HEARTBEAT: 1000 * 2,
    LOBBY: {
-      MINPLAYER: 0,
+      MINPLAYER: 3,
       PREPTIME: 1000 * 15,
       UNPREPTIME: 1000 * 60,
       INITTIME: 1000 * 5,
@@ -44,7 +44,6 @@ export const CONFIG = {
          1, // Clear
       ],
    },
-   // WEATHER
    TIME: {
       STARTHOUR: 6, // What time do we start the server at?
       PERMINUTE: 5, // Used to set the Time Scale of the server for the minute. 1 Minute = 30 Minutes.

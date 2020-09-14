@@ -16,7 +16,7 @@ export class LobbyHandler {
    }
 
    public updateData() {
-      console.log(chalk.greenBright("[DATABASE]: Clearing Lobby Data"));
+      console.log(chalk.greenBright("[DATABASE] Clearing Lobby Data"));
       lobbyModel.collection.deleteMany({});
    }
 
@@ -49,7 +49,7 @@ export class LobbyHandler {
          this.appendData(data);
          console.log(chalk.greenBright(`${instance.name} joined the Lobby.`));
 
-         this._game.modifyAmount("increase");
+         this._game.players("plus");
       } else {
          console.log(chalk.redBright(`${instance.name} already in the Lobby.`));
       }
@@ -60,6 +60,7 @@ export class LobbyHandler {
       await lobbyModel.deleteOne({ playerReference: _playerAccount._id });
 
       console.log(chalk.redBright(`${instance.name} left Lobby.`));
+      this._game.players("minus");
    }
 
    public async appendData(data: ILobby) {

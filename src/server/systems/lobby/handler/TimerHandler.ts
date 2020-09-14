@@ -3,12 +3,17 @@ import * as moment from "moment";
 import { TimerTypes } from "../../../enums/systems/TimerTypes";
 import { events } from "../../eventLibary";
 import { CONFIG } from "../../../CONFIGuration/CONFIG";
+import { GameHandler } from "./GameHandler";
 
 export class TimerHandler {
-   constructer() {}
    _timerInt: number;
    _isStarted: boolean = false;
    _type: TimerTypes;
+   _game: GameHandler;
+
+   constructer() {
+      this._game = GameHandler.getInstance();
+   }
 
    public start(type: TimerTypes = TimerTypes.Prep): Promise<any> {
       return new Promise((res, rej) => {
@@ -41,6 +46,8 @@ export class TimerHandler {
                res();
             }
          }, 1000);
+
+         this._game.heartBeat();
       });
    }
    public startInit() {
