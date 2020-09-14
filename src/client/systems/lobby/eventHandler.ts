@@ -1,18 +1,18 @@
 import * as alt from "alt-client";
-import { eventLibary } from "../eventLibary";
+import { events } from "../eventLibary";
 import { TimerTypes } from "../../enums/TimerTypes";
 
-alt.onServer(eventLibary.system.lobby.init, () => {
+alt.onServer(events.system.lobby.init, () => {
    console.log(`LobbyInit.`);
 });
 
 alt.onServer(
-   eventLibary.system.lobby.timerStart,
+   events.system.lobby.timerStart,
    (type: TimerTypes = TimerTypes.Prep, config: number) => {
       console.log(`TimerStart: ${config} Seconds`);
    }
 );
 
-alt.onServer(eventLibary.system.lobby.timerStop, () => {
+alt.onServer(events.system.lobby.timerStop, () => {
    console.log(`TimerStop.`);
 });

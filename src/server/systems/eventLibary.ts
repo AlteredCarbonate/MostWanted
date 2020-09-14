@@ -3,6 +3,10 @@ export const events = {
       database: {
          init: "system::database:init",
       },
+      game: {
+         start: "system::game:start",
+         stop: "system::game:stop",
+      },
       lobby: {
          join: "system::lobby:join",
          leave: "system::lobby:leave",

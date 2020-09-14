@@ -38,8 +38,6 @@ export class LobbyHandler {
          this._playerDB.request(instance),
          this.request(instance),
       ]);
-      // let _playerAccount = await this._playerDB.request(target);
-      // let _lobby = await this.request(player);
 
       if (_lobby === null) {
          const data: ILobby = {
