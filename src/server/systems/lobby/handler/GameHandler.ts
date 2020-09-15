@@ -59,9 +59,4 @@ export class GameHandler {
       console.log(`playerAmount: ${this.playerAmount}`);
       this.heartBeat();
    }
-
-   public async chooseMission() {
-      let mission = await this._mission.request();
-      alt.emitClient(null, events.system.lobby.init, mission);
-   }
 }
