@@ -13,6 +13,7 @@ export const events = {
          timerStart: "system::lobby:timerStart",
          timerStop: "system::lobby:timerStop",
          init: "system::lobby:init",
+         exit: "system::lobbby:exit",
       },
    },
 };

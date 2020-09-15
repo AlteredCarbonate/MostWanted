@@ -2,7 +2,7 @@ import * as alt from "alt-server";
 import * as moment from "moment";
 import { TimerTypes } from "../../../enums/systems/TimerTypes";
 import { events } from "../../eventLibary";
-import { CONFIG } from "../../../CONFIGuration/CONFIG";
+import { CONFIG } from "../../../configuration/CONFIG";
 import { GameHandler } from "./GameHandler";
 
 export class HeartBeat {
@@ -14,12 +14,19 @@ export class HeartBeat {
    _game: GameHandler;
 
    private constructor() {
+      HeartBeat._instance = this;
       this._game = GameHandler.getInstance();
    }
 
    public static getInstance() {
-      return this._instance || (this._instance = new this());
+      if (!this._instance) HeartBeat._instance = new HeartBeat();
+      return HeartBeat._instance;
    }
+
+   // public static getInstance() {
+   //    console.log("Called Instance");
+   //    return this._instance ?? (this._instance = new this());
+   // }
 
    public start(type: TimerTypes = TimerTypes.Prep): Promise<any> {
       return new Promise((res, rej) => {
@@ -40,15 +47,13 @@ export class HeartBeat {
 
          this._timerInt = alt.setInterval(() => {
             countDown = Math.abs(Math.floor(moment().diff(diff) / 1000));
-            alt.emitClient(null, events.system.lobby.timerStart);
 
             if (countDown > 0) {
                // Outputting Timer
             } else {
                this.reset();
 
-               alt.emitClient(null, events.system.lobby.timerStop);
-               alt.emit(events.system.lobby.timerStop);
+               alt.emit(events.system.lobby.timerStop, "success");
                res();
             }
          }, 1000);
@@ -56,7 +61,8 @@ export class HeartBeat {
          this._game.heartBeat();
       });
    }
-   public startInit() {
+
+   public init() {
       return new Promise((res, rej) => {
          let diff, countDown;
          diff = moment().add(CONFIG.LOBBY.INITTIME, "ms");
@@ -81,6 +87,7 @@ export class HeartBeat {
    public stop() {
       if (this._isStarted) {
          alt.clearInterval(this._timerInt);
+         alt.emit(events.system.lobby.timerStop, "error");
          this.reset();
       }
    }

@@ -1,7 +1,8 @@
 import * as alt from "alt-client";
 import * as moment from "moment";
 import { TimerTypes } from "../../../enums/TimerTypes";
-export class TimerHandler {
+
+export class HeartBeat {
    constructer() {}
    _timerInt: number;
    _isStarted: boolean = false;

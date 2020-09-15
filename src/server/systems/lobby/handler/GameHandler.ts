@@ -1,25 +1,30 @@
 import * as alt from "alt-server";
-import { CONFIG } from "../../../configuration/config";
 import * as chalk from "chalk";
+import { CONFIG } from "../../../configuration/config";
 import { MissionHandler } from "./MissionHandler";
 import { events } from "../../eventLibary";
+import { HeartBeat } from "./HeartBeat";
 
 type actions = "plus" | "minus";
 
 export class GameHandler {
    static _instance: GameHandler;
+
    _mission: MissionHandler;
+   _heartBeat: HeartBeat;
 
    playerAmount: number = 0;
-   // instanced: boolean = false;
    isBeating: boolean = false;
 
    private constructor() {
+      GameHandler._instance = this;
       this._mission = MissionHandler.getInstance();
+      this._heartBeat = HeartBeat.getInstance();
    }
 
    public static getInstance() {
-      return this._instance || (this._instance = new this());
+      if (!this._instance) GameHandler._instance = new GameHandler();
+      return GameHandler._instance;
    }
 
    public heartBeat() {
@@ -28,14 +33,17 @@ export class GameHandler {
       if (this.playerAmount >= CONFIG.LOBBY.MINPLAYER) {
          if (!init) {
             init = true;
+            alt.emit(events.system.lobby.timerStart);
             beatInt = alt.setInterval(() => {
                console.log(chalk.greenBright("MinPlayer Reached"));
-               alt.emit(events.system.lobby.init);
             }, CONFIG.HEARTBEAT);
          }
       } else {
          console.log(chalk.redBright("MinPlayer Unreached"));
-         alt.clearInterval(beatInt);
+         if (init) {
+            alt.clearInterval(beatInt);
+         }
+         alt.emit(events.system.lobby.timerStop, "error");
          init = false;
       }
    }
@@ -44,7 +52,7 @@ export class GameHandler {
       this.isBeating = state;
    }
 
-   public players(type: actions) {
+   public appendData(type: actions) {
       switch (type) {
          case "plus":
             ++this.playerAmount;
@@ -59,4 +67,9 @@ export class GameHandler {
       console.log(`playerAmount: ${this.playerAmount}`);
       this.heartBeat();
    }
+
+   // GAME
+   public start() {}
+
+   public stop() {}
 }

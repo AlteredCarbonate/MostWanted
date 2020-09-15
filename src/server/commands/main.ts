@@ -8,6 +8,7 @@ import { log } from "../util";
 import { PlayerHandler } from "../systems/lobby/handler/PlayerHandler";
 import { LobbyHandler } from "../systems/lobby/handler/LobbyHandler";
 import { IInstance } from "../interfaces/IInstance";
+import { LobbyStates } from "../systems/lobby/enum/LobbyStates";
 
 let _log = new log();
 
@@ -109,6 +110,10 @@ alt.onClient(
             break;
          case "leaveLobby":
             _lobbyDB.leave(instance);
+            break;
+         case "stateReady":
+            _log.consoleMessage(player, "Setting State to Ready");
+            _lobbyDB.setState(instance, LobbyStates.Ready);
             break;
       }
    }

@@ -11,7 +11,7 @@ export const CONFIG = {
    },
    HEARTBEAT: 1000 * 2,
    LOBBY: {
-      MINPLAYER: 1,
+      MINPLAYER: 2,
       PREPTIME: 1000 * 15,
       UNPREPTIME: 1000 * 60,
       INITTIME: 1000 * 5,

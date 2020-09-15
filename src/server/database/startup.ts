@@ -11,6 +11,7 @@ import { events } from "../systems/eventLibary";
 console.log(chalk.greenBright("[DATABASE] Startup"));
 
 mongoose.connect(dbURL, {
+   useFindAndModify: false,
    useNewUrlParser: true,
    useUnifiedTopology: true,
    serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
