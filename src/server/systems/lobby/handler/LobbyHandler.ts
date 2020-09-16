@@ -5,9 +5,15 @@ import { ILobby } from "../../../database/interface/ILobby";
 import { lobbyModel } from "../../../database/models";
 import { IInstance } from "../../../interfaces/IInstance";
 import { GameHandler } from "./GameHandler";
-import { LobbyStates } from "../enum/LobbyStates";
 
 type DataTypes = "insert" | "update";
+
+//Weird behaviour Types doesn't work
+export interface IFilter {
+   key: "state" | "role";
+   value: any;
+}
+
 export class LobbyHandler {
    _playerDB: PlayerHandler;
    _game: GameHandler;
@@ -33,20 +39,6 @@ export class LobbyHandler {
          }
       }
       return null;
-   }
-
-   public async requestPlayers() {
-      return lobbyModel.find({});
-   }
-
-   public async setState(instance: IInstance, type: LobbyStates) {
-      if (!type || type == undefined)
-         return console.log(chalk.redBright("Cannot setState of undefined"));
-
-      const data: ILobby = {
-         state: type,
-      };
-      this.appendData(data, "update", instance);
    }
 
    public async join(instance: IInstance) {
@@ -76,11 +68,63 @@ export class LobbyHandler {
       console.log(chalk.redBright(`${instance.name} left Lobby.`));
       this._game.appendData("minus");
    }
+
+   public async requestPlayers(filter?: IFilter) {
+      if (!filter) {
+         return await lobbyModel.find({});
+      }
+      if (!filter.key) {
+         console.log("requestPlayers");
+         return console.log(chalk.redBright("Missing filter.key"));
+      }
+      switch (filter.key) {
+         case "role":
+            return await lobbyModel.find({ role: filter.value });
+
+         case "state":
+            return await lobbyModel.find({ state: filter.value });
+      }
+   }
+
+   public async setState(
+      instance: IInstance,
+      key?: "state" | "role",
+      value?: any
+   ) {
+      if (!value) {
+         return await lobbyModel.find({});
+      }
+      if (value && !key) {
+         console.log("setState");
+         return console.log(chalk.redBright("Missing filter.key"));
+      }
+
+      console.log("setState");
+      console.log(key);
+      console.log(value);
+
+      let data;
+      switch (key) {
+         case "state":
+            data = {
+               state: value,
+            };
+            break;
+         case "role":
+            data = {
+               role: value,
+            };
+            break;
+      }
+
+      this.appendData(data, "update", instance);
+   }
+
    /**
     * Instance is required if type = update
     */
    public async appendData(
-      data: ILobby,
+      data: any,
       type: DataTypes = "insert",
       instance?: IInstance
    ) {
@@ -102,7 +146,6 @@ export class LobbyHandler {
 
             break;
          case "update":
-            // let _lobby = await this.request(instance);
             if (!instance || instance == undefined) {
                return console.log(
                   chalk.redBright("Cannot request Data of Undefined")
@@ -113,8 +156,7 @@ export class LobbyHandler {
                let _playerAccount = await this._playerDB.request(instance);
                await lobbyModel.findOneAndUpdate(
                   { playerReference: _playerAccount._id },
-                  data,
-                  { new: false }
+                  data
                );
             }
             break;

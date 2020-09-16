@@ -6,9 +6,10 @@ import { LogTypes } from "../enums/LogTypes";
 import { CommandList } from "../enums/CommandList";
 import { log } from "../util";
 import { PlayerHandler } from "../systems/lobby/handler/PlayerHandler";
-import { LobbyHandler } from "../systems/lobby/handler/LobbyHandler";
+import { LobbyHandler, IFilter } from "../systems/lobby/handler/LobbyHandler";
 import { IInstance } from "../interfaces/IInstance";
 import { LobbyStates } from "../systems/lobby/enum/LobbyStates";
+import { LobbyRoles } from "../systems/lobby/enum/LobbyRoles";
 
 let _log = new log();
 
@@ -112,8 +113,28 @@ alt.onClient(
             _lobbyDB.leave(instance);
             break;
          case "stateReady":
-            _log.consoleMessage(player, "Setting State to Ready");
-            _lobbyDB.setState(instance, LobbyStates.Ready);
+            _log.consoleMessage(
+               player,
+               "Setting State to Ready - Default Police"
+            );
+
+            _lobbyDB.setState(instance, "state", LobbyStates.Ready);
+            _lobbyDB.setState(instance, "role", LobbyRoles.Police);
+            break;
+
+         case "requestPlayer":
+            const filterRqst: IFilter = {
+               key: "state",
+               value: LobbyStates.Ready,
+            };
+
+            const filterRqst2: IFilter = {
+               key: "role",
+               value: LobbyRoles.Police,
+            };
+
+            console.log(await _lobbyDB.requestPlayers(filterRqst));
+            console.log(await _lobbyDB.requestPlayers(filterRqst2));
             break;
       }
    }
