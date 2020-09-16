@@ -118,7 +118,7 @@ alt.onClient(
                "Setting State to Ready - Default Police"
             );
 
-            _lobbyDB.setState(instance, "state", LobbyStates.Ready);
+            // _lobbyDB.setState(instance, "state", LobbyStates.Ready);
             _lobbyDB.setState(instance, "role", LobbyRoles.Police);
             break;
 

@@ -15,6 +15,7 @@ export class GameHandler {
 
    playerAmount: number = 0;
    isBeating: boolean = false;
+   beatInt: any;
 
    private constructor() {
       GameHandler._instance = this;
@@ -28,23 +29,19 @@ export class GameHandler {
    }
 
    public heartBeat() {
-      let init: boolean = false;
-      let beatInt: any = 0;
       if (this.playerAmount >= CONFIG.LOBBY.MINPLAYER) {
-         if (!init) {
-            init = true;
+         if (!this.isBeating) {
+            this.isBeating = true;
             alt.emit(events.system.lobby.timerStart);
-            beatInt = alt.setInterval(() => {
-               console.log(chalk.greenBright("MinPlayer Reached"));
-            }, CONFIG.HEARTBEAT);
+            this.heart();
          }
       } else {
          console.log(chalk.redBright("MinPlayer Unreached"));
-         if (init) {
-            alt.clearInterval(beatInt);
+         if (this.isBeating) {
+            alt.clearInterval(this.beatInt);
          }
          alt.emit(events.system.lobby.timerStop, "error");
-         init = false;
+         this.isBeating = false;
       }
    }
 
@@ -72,4 +69,13 @@ export class GameHandler {
    public start() {}
 
    public stop() {}
+
+   // PRIVATE
+   private heart() {
+      // MinPlayer Reached
+      this.isBeating = true;
+      this.beatInt = alt.setInterval(() => {
+         // CONTENT
+      }, CONFIG.HEARTBEAT);
+   }
 }

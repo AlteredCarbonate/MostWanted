@@ -5,6 +5,8 @@ import { events } from "../../eventLibary";
 import { CONFIG } from "../../../configuration/CONFIG";
 import { GameHandler } from "./GameHandler";
 
+export type stopTypes = "success" | "error";
+
 export class HeartBeat {
    static _instance: HeartBeat;
 
@@ -44,16 +46,17 @@ export class HeartBeat {
                diff = moment().add(CONFIG.LOBBY.UNPREPTIME, "ms");
                break;
          }
+         alt.emit(events.system.lobby.timerStart);
 
          this._timerInt = alt.setInterval(() => {
             countDown = Math.abs(Math.floor(moment().diff(diff) / 1000));
 
             if (countDown > 0) {
                // Outputting Timer
+               console.log(countDown);
             } else {
-               this.reset();
+               this.stop("success");
 
-               alt.emit(events.system.lobby.timerStop, "success");
                res();
             }
          }, 1000);
@@ -69,25 +72,32 @@ export class HeartBeat {
 
          this._timerInt = alt.setInterval(() => {
             countDown = Math.abs(Math.floor(moment().diff(diff) / 1000));
-            alt.emitClient(null, events.system.lobby.timerStart);
 
             if (countDown > 0) {
                // Outputting Timer
             } else {
-               this.reset();
+               this.stop("success");
 
-               alt.emitClient(null, events.system.lobby.timerStop);
-               alt.emit(events.system.lobby.timerStop);
+               alt.emit(events.system.lobby.timerStop, "success");
                res();
             }
          }, 1000);
       });
    }
 
-   public stop() {
+   public stop(type: stopTypes) {
       if (this._isStarted) {
          alt.clearInterval(this._timerInt);
-         alt.emit(events.system.lobby.timerStop, "error");
+         alt.emit(events.system.lobby.timerStop, type);
+         switch (type) {
+            case "success":
+               this.init();
+               break;
+
+            case "error":
+               break;
+         }
+
          this.reset();
       }
    }
