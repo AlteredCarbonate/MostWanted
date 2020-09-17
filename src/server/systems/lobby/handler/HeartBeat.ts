@@ -10,8 +10,10 @@ export type stopTypes = "success" | "error";
 export class HeartBeat {
    static _instance: HeartBeat;
 
-   _timerInt: number;
-   _isStarted: boolean = false;
+   _timerInit: number;
+   _timerStart: number;
+   _timerStarted: boolean = false;
+   _timerInited: boolean = false;
    _type: TimerTypes;
    _game: GameHandler;
 
@@ -25,18 +27,13 @@ export class HeartBeat {
       return HeartBeat._instance;
    }
 
-   // public static getInstance() {
-   //    console.log("Called Instance");
-   //    return this._instance ?? (this._instance = new this());
-   // }
-
    public start(type: TimerTypes = TimerTypes.Prep): Promise<any> {
       return new Promise((res, rej) => {
          let diff, countDown;
          this._type = type;
 
-         if (this._isStarted) return;
-         this._isStarted = true;
+         if (this._timerStarted) return;
+         this._timerStarted = true;
 
          switch (type) {
             case TimerTypes.Prep:
@@ -46,16 +43,22 @@ export class HeartBeat {
                diff = moment().add(CONFIG.LOBBY.UNPREPTIME, "ms");
                break;
          }
+
          alt.emit(events.system.lobby.timerStart);
-
-         this._timerInt = alt.setInterval(() => {
+         console.log("Normal Timer");
+         this._timerStart = alt.setInterval(() => {
             countDown = Math.abs(Math.floor(moment().diff(diff) / 1000));
-
             if (countDown > 0) {
                // Outputting Timer
                console.log(countDown);
+               if (countDown == 3) {
+                  alt.emit(events.system.game.setReady);
+                  console.log("TEMP INIT");
+               }
             } else {
-               this.stop("success");
+               this.init();
+               alt.clearInterval(this._timerStart);
+               this.reset();
 
                res();
             }
@@ -68,15 +71,22 @@ export class HeartBeat {
    public init() {
       return new Promise((res, rej) => {
          let diff, countDown;
+
+         if (this._timerInited) return;
+         this._timerInited = true;
+
          diff = moment().add(CONFIG.LOBBY.INITTIME, "ms");
 
-         this._timerInt = alt.setInterval(() => {
+         console.log("Init Timer");
+         this._timerInit = alt.setInterval(() => {
             countDown = Math.abs(Math.floor(moment().diff(diff) / 1000));
-
             if (countDown > 0) {
                // Outputting Timer
+               console.log(countDown);
             } else {
-               this.stop("success");
+               alt.clearInterval(this._timerInit);
+               console.log("Init Stop");
+               this.reset();
 
                alt.emit(events.system.lobby.timerStop, "success");
                res();
@@ -85,24 +95,8 @@ export class HeartBeat {
       });
    }
 
-   public stop(type: stopTypes) {
-      if (this._isStarted) {
-         alt.clearInterval(this._timerInt);
-         alt.emit(events.system.lobby.timerStop, type);
-         switch (type) {
-            case "success":
-               this.init();
-               break;
-
-            case "error":
-               break;
-         }
-
-         this.reset();
-      }
-   }
-
    public reset() {
-      this._isStarted = false;
+      this._timerStarted = false;
+      this._timerInited = false;
    }
 }

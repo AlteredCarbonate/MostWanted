@@ -31,9 +31,12 @@ export class GameHandler {
    public heartBeat() {
       if (this.playerAmount >= CONFIG.LOBBY.MINPLAYER) {
          if (!this.isBeating) {
-            this.isBeating = true;
             alt.emit(events.system.lobby.timerStart);
-            this.heart();
+
+            this.isBeating = true;
+            this.beatInt = alt.setInterval(() => {
+               console.log(chalk.greenBright("MinPlayer Reached"));
+            }, CONFIG.HEARTBEAT);
          }
       } else {
          console.log(chalk.redBright("MinPlayer Unreached"));
@@ -69,13 +72,4 @@ export class GameHandler {
    public start() {}
 
    public stop() {}
-
-   // PRIVATE
-   private heart() {
-      // MinPlayer Reached
-      this.isBeating = true;
-      this.beatInt = alt.setInterval(() => {
-         // CONTENT
-      }, CONFIG.HEARTBEAT);
-   }
 }

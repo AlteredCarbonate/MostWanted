@@ -119,7 +119,7 @@ alt.onClient(
             );
 
             // _lobbyDB.setState(instance, "state", LobbyStates.Ready);
-            _lobbyDB.setState(instance, "role", LobbyRoles.Police);
+            _lobbyDB.setState(instance, "role", LobbyRoles.Police, player);
             break;
 
          case "requestPlayer":

@@ -1,10 +1,12 @@
 import * as chalk from "chalk";
+import * as alt from "alt-server";
 
 import { PlayerHandler } from "./PlayerHandler";
 import { ILobby } from "../../../database/interface/ILobby";
 import { lobbyModel } from "../../../database/models";
 import { IInstance } from "../../../interfaces/IInstance";
 import { GameHandler } from "./GameHandler";
+import { events } from "../../eventLibary";
 
 type DataTypes = "insert" | "update";
 
@@ -75,7 +77,8 @@ export class LobbyHandler {
       }
       if (!filter.key) {
          console.log("requestPlayers");
-         return console.log(chalk.redBright("Missing filter.key"));
+         console.log(chalk.redBright("Missing filter.key"));
+         return null;
       }
       switch (filter.key) {
          case "role":
@@ -89,7 +92,8 @@ export class LobbyHandler {
    public async setState(
       instance: IInstance,
       key?: "state" | "role",
-      value?: any
+      value?: any,
+      invkPlayer?: alt.Player
    ) {
       if (!value) {
          return await lobbyModel.find({});
@@ -104,6 +108,9 @@ export class LobbyHandler {
       console.log(value);
 
       let data;
+      if (invkPlayer) {
+         alt.emit(events.system.game.setState, invkPlayer, key, value);
+      }
       switch (key) {
          case "state":
             data = {

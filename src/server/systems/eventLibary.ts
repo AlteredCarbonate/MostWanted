@@ -4,6 +4,8 @@ export const events = {
          init: "system::database:init",
       },
       game: {
+         setState: "system::game:setState",
+         setReady: "system::game:setReady",
          start: "system::game:start",
          stop: "system::game:stop",
       },

@@ -3,7 +3,6 @@ import { events } from "../eventLibary";
 import { LobbyHandler } from "./handler/LobbyHandler";
 import { IInstance } from "../../interfaces/IInstance";
 import { HeartBeat } from "./handler/HeartBeat";
-// import { TimerTypes } from "../../enums/systems/TimerTypes";
 
 let _lobbyHandler = new LobbyHandler();
 let _heartBeat = HeartBeat.getInstance();
@@ -19,9 +18,18 @@ alt.on(events.system.lobby.timerStart, () => {
    alt.emitClient(null, events.system.lobby.timerStart);
 });
 
-alt.on(events.system.lobby.timerStop, (type: "success" | "error") => {
-   _heartBeat.stop(type);
+alt.on(events.system.game.setReady, () => {
+   alt.emitClient(null, events.system.game.setReady);
 });
+
+alt.on(
+   events.system.game.setState,
+   (invkPlayer: alt.Player, key: any, value: any) => {
+      invkPlayer.setMeta(key, { state: value });
+   }
+);
+
+alt.on(events.system.lobby.timerStop, (type: "success" | "error") => {});
 
 alt.on(events.system.lobby.join, (instance: IInstance) => {
    _lobbyHandler.join(instance);
